@@ -1,0 +1,561 @@
+const PRODUCTS = [
+  {
+    id: "3-fit-lion-divine",
+    name: "3 FIT LION DIVINE",
+    stock: 100,
+    price: 1850,
+    category: "Divine Home",
+    rating: 4.8,
+    reviews: 32,
+    sku: "DC-LD-3001",
+    crop: [601, 66, 180, 191],
+    description: "Premium 3 Fit Lion Divine temple décor designed for home, office, and pooja spaces. Elegant craftsmanship with a traditional spiritual appearance.",
+    features: ["Premium quality materials", "Elegant traditional design", "Suitable for home and office", "Ideal for pooja rooms", "Premium decorative finish", "Suitable for gifting"]
+  },
+  {
+    id: "golden-black-3-fit-divine",
+    name: "GOLDEN BLACK 3 FIT DIVINE",
+    stock: 100,
+    price: 2200,
+    category: "Divine Home",
+    rating: 4.9,
+    reviews: 27,
+    sku: "DC-GB-3002",
+    crop: [816, 66, 179, 191],
+    description: "A premium golden-black 3 Fit Divine temple decoration designed to add an elegant spiritual atmosphere to homes, offices, and pooja rooms.",
+    features: ["Durable construction", "Antique golden finish", "Traditional spiritual design", "Premium appearance", "Easy to maintain", "Suitable for home temples"]
+  },
+  {
+    id: "lion-divine-home",
+    name: "LION DIVINE HOME",
+    stock: 200,
+    price: 3000,
+    category: "Divine Home",
+    rating: 4.9,
+    reviews: 45,
+    sku: "DC-LH-3003",
+    crop: [383, 637, 183, 150],
+    description: "A large premium Lion Divine Home temple designed as an elegant centerpiece for spiritual spaces.",
+    features: ["Spacious design", "High-quality construction", "Traditional craftsmanship", "Premium decorative finish", "Suitable for home temples", "Elegant spiritual appearance"]
+  },
+  {
+    id: "standed-steel-accessories",
+    name: "STANDED STEEL ACCESSORIES",
+    stock: 30,
+    price: 190,
+    category: "Accessories",
+    rating: 4.7,
+    reviews: 18,
+    sku: "DC-SA-0019",
+    crop: [601, 637, 181, 149],
+    description: "Premium standing steel spiritual accessories designed for temple and devotional spaces.",
+    features: ["High-grade steel", "Rust-resistant", "Premium finish", "Durable construction", "Strong and stable", "Decorative appearance"]
+  },
+  {
+    id: "usb-stone-lighting",
+    name: "USB STONE LIGHTING",
+    stock: 100,
+    price: 1500,
+    category: "Lighting",
+    rating: 4.8,
+    reviews: 23,
+    sku: "DC-UL-1500",
+    crop: [816, 637, 178, 149],
+    description: "USB-powered stone lighting with a divine decorative design that creates a peaceful and attractive atmosphere.",
+    features: ["USB powered", "Energy efficient", "Beautiful illumination", "Premium decorative design", "Easy to use", "Suitable for gifting"]
+  },
+  {
+    id: "lion-golden-temple",
+    name: "LION GOLDEN TEMPLE",
+    stock: 100,
+    price: 1500,
+    category: "Temples",
+    rating: 4.8,
+    reviews: 31,
+    sku: "DC-LT-1500",
+    crop: [383, 1083, 183, 113],
+    description: "Premium Lion Golden Temple suitable for indoor and outdoor spiritual spaces with an elegant golden finish.",
+    features: ["Weather resistant", "Premium golden finish", "Strong and durable", "Traditional design", "Suitable for indoor and outdoor use", "Easy to maintain"]
+  }
+];
+
+const CATEGORIES = [
+  ["Divine Home", 3, "lion-divine-home"],
+  ["Temples", 1, "lion-golden-temple"],
+  ["Accessories", 1, "standed-steel-accessories"],
+  ["Lighting", 1, "usb-stone-lighting"],
+  ["Home Décor", 4, "3-fit-lion-divine"]
+];
+
+const PATHS = {
+  home: "/", categories: "/categories", shop: "/shop", search: "/search",
+  wishlist: "/wishlist", cart: "/cart", checkout: "/checkout", success: "/order-success",
+  tracking: "/order-tracking", profile: "/profile", orders: "/my-orders", about: "/about",
+  contact: "/contact", faq: "/faq", privacy: "/privacy-policy", terms: "/terms-and-conditions",
+  returns: "/return-and-refund-policy", login: "/login", register: "/register", admin: "/admin"
+};
+
+const app = document.querySelector("#app");
+const toast = document.querySelector("#toast");
+const modalLayer = document.querySelector("#modal-layer");
+const menu = document.querySelector("#mobile-menu");
+const menuToggle = document.querySelector("#menu-toggle");
+
+const state = {
+  cart: readStorage("divine-cart", [{ id: "3-fit-lion-divine", quantity: 1 }, { id: "standed-steel-accessories", quantity: 1 }]),
+  wishlist: readStorage("divine-wishlist", ["lion-divine-home", "usb-stone-lighting"]),
+  catalog: [...PRODUCTS],
+  category: "",
+  query: "",
+  sort: "popular",
+  maxPrice: 3000,
+  checkoutStep: 0,
+  delivery: "standard",
+  payment: "wallet",
+  promoApplied: false,
+  adminSection: "dashboard",
+  loggedIn: true,
+  activeTab: "description"
+};
+
+function readStorage(key, fallback) {
+  try { return JSON.parse(localStorage.getItem(key)) || fallback; } catch { return fallback; }
+}
+
+function writeStorage() {
+  localStorage.setItem("divine-cart", JSON.stringify(state.cart));
+  localStorage.setItem("divine-wishlist", JSON.stringify(state.wishlist));
+}
+
+function money(value) {
+  return `MYR ${Number(value).toLocaleString("en-MY", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+function productById(id) {
+  return state.catalog.find(product => product.id === id) || state.catalog[0];
+}
+
+function image(product, className = "") {
+  const [x, y, w, h] = product.crop;
+  const width = (1023 / w) * 100;
+  const left = (-x / w) * 100;
+  const top = (-y / h) * 100;
+  return `<div class="product-image ${className}" style="aspect-ratio:${w}/${h}"><img src="/divine-products-reference.png" alt="${product.name}" style="width:${width}%;left:${left}%;top:${top}%"></div>`;
+}
+
+function stars(product) {
+  return `<span class="rating" aria-label="${product.rating} out of 5"><b>★</b> ${product.rating} <small>(${product.reviews})</small></span>`;
+}
+
+function card(product, quick = true) {
+  const saved = state.wishlist.includes(product.id);
+  return `<article class="product-card">
+    <div class="card-media">
+      <button class="heart ${saved ? "saved" : ""}" data-wishlist="${product.id}" aria-label="${saved ? "Remove from" : "Add to"} wishlist">${saved ? "♥" : "♡"}</button>
+      <button class="image-link" data-product="${product.id}" aria-label="View ${product.name}">${image(product)}</button>
+      ${quick ? `<button class="quick-link" data-quick="${product.id}">⌕ Quick view</button>` : ""}
+    </div>
+    <div class="card-copy">
+      <div class="card-meta"><span>${product.category}</span>${stars(product)}</div>
+      <button class="product-title" data-product="${product.id}">${product.name}</button>
+      <span class="stock"><i></i>${product.stock} in stock</span>
+      <div class="card-price"><strong>${money(product.price)}</strong><button data-add="${product.id}" aria-label="Add ${product.name} to cart">＋</button></div>
+    </div>
+  </article>`;
+}
+
+function sectionHeading(kicker, title, text = "", action = "", route = "") {
+  return `<div class="section-heading"><div><span class="eyebrow">${kicker}</span><h2>${title}</h2>${text ? `<p>${text}</p>` : ""}</div>${action ? `<button class="text-link" data-nav="${route}">${action} →</button>` : ""}</div>`;
+}
+
+function pageHero(kicker, title, text) {
+  return `<section class="page-hero"><div class="container"><span class="eyebrow">${kicker}</span><h1>${title}</h1><p>${text}</p></div></section>`;
+}
+
+function emptyState(icon, title, text, label, route) {
+  return `<div class="empty-state"><span>${icon}</span><h2>${title}</h2><p>${text}</p><button class="btn primary" data-nav="${route}">${label}</button></div>`;
+}
+
+function trustSection() {
+  return `<section class="trust"><div class="container trust-grid">
+    <div><span>♧</span><p><strong>Free Delivery</strong><small>Orders above MYR 200</small></p></div>
+    <div><span>◇</span><p><strong>Secure Payment</strong><small>Protected checkout</small></p></div>
+    <div><span>✓</span><p><strong>Premium Quality</strong><small>Curated craftsmanship</small></p></div>
+    <div><span>↻</span><p><strong>Easy Returns</strong><small>7-day return policy</small></p></div>
+  </div></section>`;
+}
+
+function renderHome() {
+  const hero = productById("lion-divine-home");
+  app.innerHTML = `<section class="hero"><div class="container hero-grid">
+    <div class="hero-copy">
+      <span class="hero-kicker">✦ Curated spiritual craftsmanship</span>
+      <h1>Bring Divine Beauty <em>Into Your Space</em></h1>
+      <p>Discover premium spiritual, temple and decorative products crafted to create beautiful and peaceful spaces.</p>
+      <div class="button-row"><button class="btn primary large" data-nav="shop">Shop Collection →</button><button class="btn white large" data-nav="categories">Explore Categories</button></div>
+      <div class="hero-proof"><span>DC</span><span>✦</span><span>MY</span><p><strong>4.9 / 5</strong><small>Loved by spiritual homes across Malaysia</small></p></div>
+    </div>
+    <div class="hero-visual"><div class="hero-arch">${image(hero, "hero-image")}<div class="hero-tag"><span>Collector’s choice</span><strong>Lion Divine Home</strong><small>${money(hero.price)}</small></div></div><div class="floating-note note-one"><b>✓</b><span><strong>Premium quality</strong><small>Hand-finished details</small></span></div><div class="floating-note note-two"><b>♧</b><span><strong>Malaysia-wide</strong><small>Safe, secure delivery</small></span></div></div>
+  </div></section>
+  <section class="section"><div class="container">${sectionHeading("Find your piece", "Shop by category", "Meaningful décor for every sacred corner.", "View all categories", "categories")}<div class="category-grid">${CATEGORIES.map(([name, , id]) => `<button class="category-card" data-category="${name}">${image(productById(id))}<span><small>Explore</small><strong>${name}</strong><b>→</b></span></button>`).join("")}</div></div></section>
+  <section class="section featured"><div class="container">${sectionHeading("Divine essentials", "Featured collection", "Six signature pieces, chosen for craftsmanship, presence and purpose.", "Shop all products", "shop")}<div class="product-grid">${state.catalog.map(product => card(product)).join("")}</div></div></section>
+  <section class="section promos"><div class="container promo-grid"><article class="promo-main"><span class="eyebrow light">The signature edit</span><h2>Crafted for Divine Spaces</h2><p>Premium traditional pieces that bring devotion, warmth and quiet grandeur home.</p><button class="btn white" data-nav="shop">Discover the collection →</button>${image(productById("3-fit-lion-divine"))}</article><article class="promo-small"><span>✦</span><p><small>Premium Spiritual Collection</small><strong>Timeless details. Sacred meaning.</strong></p></article><article class="promo-small gold"><span>♧</span><p><small>Bring Tradition Home</small><strong>Gifts with lasting significance.</strong></p></article></div></section>${trustSection()}`;
+}
+
+function renderCategories() {
+  app.innerHTML = `${pageHero("Curated by purpose", "Categories", "Explore pieces for prayer rooms, peaceful interiors and meaningful gifting.")}<section class="section"><div class="container categories-large">${CATEGORIES.map(([name, count, id], index) => `<article class="category-large ${index === 0 ? "wide" : ""}">${image(productById(id))}<div><span>${String(count).padStart(2, "0")} curated ${count === 1 ? "piece" : "pieces"}</span><h2>${name}</h2><button class="btn white" data-category="${name}">View Products →</button></div></article>`).join("")}</div></section>${trustSection()}`;
+}
+
+function renderShop() {
+  let products = state.catalog.filter(product => (!state.category || product.category === state.category || state.category === "Home Décor") && product.price <= state.maxPrice && (!state.query || `${product.name} ${product.category}`.toLowerCase().includes(state.query.toLowerCase())));
+  products.sort((a, b) => state.sort === "price-low" ? a.price - b.price : state.sort === "price-high" ? b.price - a.price : state.sort === "rating" ? b.rating - a.rating : b.reviews - a.reviews);
+  app.innerHTML = `${pageHero("The complete edit", "Shop Divine Collection", "Premium spiritual accents, crafted for homes with soul.")}<section class="section"><div class="container shop-layout">
+    <aside class="filters"><div class="filter-title"><strong>☷ Filters</strong><button id="reset-filters">Reset</button></div><fieldset><legend>Category</legend>${["Divine Home", "Temples", "Accessories", "Lighting"].map(category => `<label><input type="radio" name="category-filter" value="${category}" ${state.category === category ? "checked" : ""}>${category}</label>`).join("")}</fieldset><fieldset><legend>Price range</legend><div class="range-label"><span>MYR 0</span><span>${money(state.maxPrice)}</span></div><input id="price-range" type="range" min="190" max="3000" step="50" value="${state.maxPrice}"></fieldset><fieldset><legend>Availability</legend><label><input type="checkbox" checked>In stock only</label></fieldset><fieldset><legend>Rating</legend><label><input type="radio" name="rating-filter">★ 4.5 &amp; above</label><label><input type="radio" name="rating-filter">★ 4.0 &amp; above</label></fieldset></aside>
+    <div class="shop-results"><div class="shop-tools"><label class="shop-search">⌕<input id="shop-query" value="${state.query}" placeholder="Search products…"></label><button class="btn filter-button" id="mobile-filter">☷ Filter</button><label class="sort"><small>Sort by</small><select id="sort-select"><option value="popular" ${state.sort === "popular" ? "selected" : ""}>Popular</option><option value="newest">Newest</option><option value="price-low" ${state.sort === "price-low" ? "selected" : ""}>Price Low to High</option><option value="price-high" ${state.sort === "price-high" ? "selected" : ""}>Price High to Low</option><option value="rating" ${state.sort === "rating" ? "selected" : ""}>Rating</option></select></label></div><div class="results-line"><span><strong>${products.length}</strong> pieces found</span>${state.category ? `<button id="clear-category">${state.category} ×</button>` : ""}</div>${products.length ? `<div class="product-grid listing">${products.map(product => card(product)).join("")}</div>` : emptyState("⌕", "No pieces found", "Try adjusting your filters to discover more from the collection.", "Reset filters", "shop")}</div>
+  </div></section>`;
+}
+
+function renderProduct(id) {
+  const product = productById(id);
+  const saved = state.wishlist.includes(product.id);
+  const related = state.catalog.filter(item => item.id !== product.id).slice(0, 3);
+  app.innerHTML = `<div class="container breadcrumb"><button data-nav="home">Home</button><span>›</span><button data-nav="shop">Shop</button><span>›</span><b>${product.name}</b></div><section class="container product-layout">
+    <div class="gallery"><div class="main-image">${image(product)}<button class="gallery-back" data-nav="shop">‹</button><button class="gallery-heart ${saved ? "saved" : ""}" data-wishlist="${product.id}">${saved ? "♥" : "♡"}</button><button class="zoom-toggle" id="zoom-toggle">⌕ Zoom</button></div><div class="thumbs">${["Front view", "Craft detail", "Room view"].map((label, index) => `<button class="${index === 0 ? "active" : ""}" data-thumb="${index}">${image(product)}<span>${label}</span></button>`).join("")}</div></div>
+    <div class="product-info"><div class="info-top"><span class="eyebrow">${product.category}</span><button aria-label="Share product">↗</button></div><h1>${product.name}</h1><div class="detail-rating"><span>★★★★★</span>${stars(product)}<small>✓ Verified quality</small></div><strong class="detail-price">${money(product.price)}</strong><p class="description">${product.description}</p><div class="quality-cards"><div><b>${product.stock}</b><small>In Stock</small></div><div><b>Premium</b><small>Quality</small></div><div><b>Secure</b><small>Packaging</small></div></div><h3>Why you’ll love it</h3><ul class="feature-list">${product.features.slice(0, 5).map(feature => `<li>✓ ${feature}</li>`).join("")}</ul><div class="purchase"><div><span>Quantity</span><div class="quantity"><button data-detail-minus>−</button><b id="detail-quantity">1</b><button data-detail-plus>＋</button></div></div><div class="button-row"><button class="btn outline flex" data-detail-add="${product.id}">▱ Add to Cart</button><button class="btn primary flex" data-buy="${product.id}">Buy Now →</button></div></div><div class="delivery-note">♧ <span><strong>Complimentary Malaysia delivery</strong><small>Estimated arrival in 3–5 business days</small></span></div></div>
+  </section><section class="section detail-section"><div class="container"><div class="tabs">${["description", "features", "specifications", "reviews", "shipping", "returns"].map(tab => `<button class="${state.activeTab === tab ? "active" : ""}" data-tab="${tab}">${tab[0].toUpperCase() + tab.slice(1)}</button>`).join("")}</div><div class="tab-panel" id="tab-panel">${tabContent(product)}</div></div></section><section class="section related"><div class="container">${sectionHeading("Continue exploring", "Related pieces")}<div class="product-grid related-grid">${related.map(item => card(item, false)).join("")}</div></div></section>`;
+}
+
+function tabContent(product) {
+  const tab = state.activeTab;
+  if (tab === "features") return `<h2>Product features</h2><div class="feature-detail">${product.features.map(feature => `<div>✓ <span>${feature}</span></div>`).join("")}</div>`;
+  if (tab === "specifications") return `<h2>Specifications</h2><dl><div><dt>Product code</dt><dd>${product.sku}</dd></div><div><dt>Category</dt><dd>${product.category}</dd></div><div><dt>Finish</dt><dd>Premium decorative finish</dd></div><div><dt>Care</dt><dd>Dust gently with a soft, dry cloth</dd></div></dl>`;
+  if (tab === "reviews") return `<h2>Customer reviews</h2><div class="review-score"><strong>${product.rating}</strong><span>★★★★★<small>Based on ${product.reviews} verified reviews</small></span></div>`;
+  if (tab === "shipping") return `<h2>Shipping information</h2><p>Carefully packed and dispatched throughout Malaysia. Standard delivery is 3–5 business days; express delivery is available at checkout.</p>`;
+  if (tab === "returns") return `<h2>Return policy</h2><p>Eligible items may be returned within 7 days in their original condition and packaging. Contact our care team before sending an item back.</p>`;
+  return `<span class="eyebrow">The story of this piece</span><h2>Craftsmanship with presence</h2><p>${product.description} Every detail has been selected to feel refined, enduring and worthy of a meaningful space.</p>`;
+}
+
+function renderSearch() {
+  const results = state.query ? state.catalog.filter(product => `${product.name} ${product.category}`.toLowerCase().includes(state.query.toLowerCase())) : [];
+  app.innerHTML = `<section class="search-hero"><div class="container"><span class="eyebrow">Discover your next piece</span><h1>What are you looking for?</h1><form id="search-form"><span>⌕</span><input id="search-input" value="${state.query}" placeholder="Search products…" aria-label="Search products"><button class="btn primary">Search</button></form></div></section><section class="section"><div class="container">${state.query ? sectionHeading(`${results.length} results`, `Search results for “${state.query}”`) : `<div class="suggestions"><div><h2>Recent searches</h2><div><button data-search="Divine Home">◷ Divine Home</button><button data-search="Accessories">◷ Accessories</button></div></div><div><h2>Popular searches</h2><div>${["Lion Divine", "Golden Temple", "Temple accessories", "USB lighting"].map(term => `<button data-search="${term}">✦ ${term}</button>`).join("")}</div></div></div>`}${state.query ? (results.length ? `<div class="product-grid">${results.map(product => card(product)).join("")}</div>` : emptyState("⌕", "Sorry, we couldn't find anything matching your search.", "Try a different phrase or browse the complete Divine Collection.", "Browse All Products", "shop")) : ""}</div></section>`;
+}
+
+function renderWishlist() {
+  const saved = state.catalog.filter(product => state.wishlist.includes(product.id));
+  app.innerHTML = `${pageHero("Your curated list", "Wishlist", "Pieces you love, saved together.")}<section class="section"><div class="container">${saved.length ? `<div class="results-line"><span><strong>${saved.length}</strong> saved pieces</span><button id="add-wishlist-cart">Add all to cart →</button></div><div class="product-grid">${saved.map(product => card(product, false)).join("")}</div>` : emptyState("♡", "Your Wishlist is Empty", "Save products you love and find them here.", "Explore Products", "shop")}</div></section>`;
+}
+
+function cartItems() {
+  return state.cart.map(item => ({ ...item, product: productById(item.id) })).filter(item => item.product);
+}
+
+function cartSubtotal() {
+  return cartItems().reduce((total, item) => total + item.product.price * item.quantity, 0);
+}
+
+function quantityControl(id, quantity) {
+  return `<div class="quantity"><button data-cart-minus="${id}" aria-label="Decrease quantity">−</button><b>${quantity}</b><button data-cart-plus="${id}" aria-label="Increase quantity">＋</button></div>`;
+}
+
+function renderCart() {
+  const items = cartItems();
+  const subtotal = cartSubtotal();
+  const shipping = subtotal >= 200 ? 0 : 25;
+  app.innerHTML = `${pageHero("Your selection", "Shopping Cart", "Review your pieces before checkout.")}<section class="section"><div class="container cart-layout">${items.length ? `<div class="cart-items"><div class="cart-head"><strong>${items.length} ${items.length === 1 ? "piece" : "pieces"}</strong><button data-nav="shop">Continue shopping →</button></div>${items.map(({ product, quantity }) => `<article class="cart-item">${image(product)}<div><span class="eyebrow">${product.category}</span><h3>${product.name}</h3><small class="stock"><i></i>In stock</small><strong class="mobile-price">${money(product.price)}</strong><div class="cart-controls">${quantityControl(product.id, quantity)}<button data-wishlist="${product.id}">♡ Save</button><button class="danger" data-remove="${product.id}">⌫ Remove</button></div></div><strong class="cart-price">${money(product.price * quantity)}</strong></article>`).join("")}</div><aside class="summary"><span class="eyebrow">Order summary</span><h2>Your total</h2><dl><div><dt>Subtotal</dt><dd>${money(subtotal)}</dd></div><div><dt>Shipping</dt><dd class="green">${shipping ? money(shipping) : "Complimentary"}</dd></div><div><dt>Discount</dt><dd>MYR 0.00</dd></div><div class="total"><dt>Total</dt><dd>${money(subtotal + shipping)}</dd></div></dl><button class="btn primary full" data-nav="checkout">Checkout securely ◇</button><small class="secure">✓ Secure checkout · No card details stored</small><div class="payment-badges"><span>VISA</span><span>Mastercard</span><span>PayPal</span><span>G Pay</span></div></aside>` : emptyState("▱", "Your Cart is Empty", "Discover something meaningful for your space.", "Continue Shopping", "shop")}</div></section>`;
+}
+
+function checkoutSteps() {
+  const labels = ["Shipping", "Delivery", "Payment", "Confirm"];
+  return `<div class="steps">${labels.map((label, index) => `<div class="${index <= state.checkoutStep ? "active" : ""}"><span>${index < state.checkoutStep ? "✓" : index + 1}</span><small>${label}</small>${index < 3 ? "<i></i>" : ""}</div>`).join("")}</div>`;
+}
+
+function checkoutStage() {
+  if (state.checkoutStep === 1) return `<div class="stage-head"><span>02</span><div><h1>Delivery method</h1><p>Choose the timing that suits you.</p></div></div><div class="choice-list">${[["economy", "Economy", "5–7 business days", 0], ["standard", "Standard", "3–5 business days", 12], ["express", "Express", "1–2 business days", 35]].map(([id, label, detail, price]) => `<label class="${state.delivery === id ? "selected" : ""}"><input type="radio" name="delivery" value="${id}" ${state.delivery === id ? "checked" : ""}><span class="choice-icon">♧</span><span><strong>${label}</strong><small>${detail}</small></span><b>${price ? money(price) : "Free"}</b></label>`).join("")}</div><div class="promo-box"><div><span>％</span><p><strong>Have a Promo Code?</strong><small>Apply it before continuing.</small></p></div><form id="promo-form"><input required placeholder="Enter promo code"><button>Apply</button></form>${state.promoApplied ? `<small class="promo-ok">✓ DIVINE8 applied — you saved ${money(Math.min(100, cartSubtotal() * .08))}.</small>` : ""}</div>`;
+  if (state.checkoutStep === 2) return `<div class="stage-head"><span>03</span><div><h1>Payment</h1><p>Select a secure payment method.</p></div></div><div class="choice-list payment-list">${[["wallet", "▣", "My Wallet", `Balance: ${money(3210)}`], ["paypal", "P", "PayPal", "Fast, protected checkout"], ["gpay", "G", "Google Pay", "Use your saved payment"], ["apple", "●", "Apple Pay", "Pay from your Apple device"], ["card", "▤", "Mastercard / Visa", "Credit or debit card"]].map(([id, icon, label, detail]) => `<label class="${state.payment === id ? "selected" : ""}"><span class="choice-icon">${icon}</span><span><strong>${label}</strong><small>${detail}</small></span><input type="radio" name="payment" value="${id}" ${state.payment === id ? "checked" : ""}></label>`).join("")}</div><div class="payment-safety">◇ <span><strong>Your payment is protected</strong><small>Payment information is encrypted and card details are never stored.</small></span></div>`;
+  if (state.checkoutStep === 3) return `<div class="stage-head"><span>04</span><div><h1>Review &amp; confirm</h1><p>One last look before placing your order.</p></div></div><div class="review-list"><div><b>⌖</b><span><strong>Delivery to</strong><small>Aishah Rahman · Kuala Lumpur, Malaysia</small></span><button data-checkout-edit="0">Edit</button></div><div><b>♧</b><span><strong>${state.delivery[0].toUpperCase() + state.delivery.slice(1)} delivery</strong><small>Estimated arrival: 12–14 August</small></span><button data-checkout-edit="1">Edit</button></div><div><b>▤</b><span><strong>${state.payment === "wallet" ? "My Wallet" : state.payment === "card" ? "Mastercard / Visa" : state.payment}</strong><small>Secure payment</small></span><button data-checkout-edit="2">Edit</button></div></div><label class="terms-check"><input type="checkbox" checked> I agree to the Terms &amp; Conditions and Return Policy.</label>`;
+  return `<div class="stage-head"><span>01</span><div><h1>Shipping address</h1><p>Where should we send your collection?</p></div></div><div class="address-tabs"><button class="active">Saved address</button><button id="show-new-address">＋ Add new address</button></div><div class="saved-address"><i></i><div><strong>Aishah Rahman</strong><p>18, Jalan Damai Perdana 3<br>Bandar Damai Perdana, 56000 Kuala Lumpur<br>Malaysia · +60 12-345 6789</p><span>Home</span></div><button>✎</button></div><form class="address-form" id="address-form" hidden><label><span>Full Name</span><input required placeholder="Your full name"></label><label><span>Phone</span><input required placeholder="+60 12-345 6789"></label><label class="full-field"><span>Address</span><input required placeholder="Street address"></label><label><span>City</span><input required placeholder="Kuala Lumpur"></label><label><span>State</span><select><option>Kuala Lumpur</option><option>Selangor</option><option>Johor</option><option>Penang</option></select></label><label><span>Postal Code</span><input required placeholder="56000"></label><label><span>Country</span><select><option>Malaysia</option></select></label></form>`;
+}
+
+function renderCheckout() {
+  const items = cartItems().length ? cartItems() : [{ product: productById("3-fit-lion-divine"), quantity: 1 }];
+  const subtotal = cartSubtotal() || 1850;
+  const deliveryFee = state.delivery === "express" ? 35 : state.delivery === "standard" ? 12 : 0;
+  const discount = state.promoApplied ? Math.min(100, subtotal * .08) : 0;
+  app.innerHTML = `<div class="checkout-page"><div class="checkout-brand"><button data-nav="cart">← Back</button><div class="brand"><span class="brand-mark">✦</span><span><strong>Divine Collection</strong></span></div><span>◇ Secure checkout</span></div><div class="container checkout-progress">${checkoutSteps()}</div><div class="container checkout-layout"><section class="checkout-card"><div id="checkout-stage">${checkoutStage()}</div><div class="checkout-actions">${state.checkoutStep ? `<button class="btn white" id="checkout-back">Back</button>` : ""}<button class="btn primary" id="checkout-next">${state.checkoutStep === 3 ? "Place Order ◇" : "Continue →"}</button></div></section><aside class="checkout-summary"><h2>Order summary <small>${items.length} items</small></h2><div class="checkout-items">${items.map(({ product, quantity }) => `<div>${image(product)}<span><strong>${product.name}</strong><small>Qty ${quantity}</small></span><b>${money(product.price * quantity)}</b></div>`).join("")}</div><dl><div><dt>Subtotal</dt><dd>${money(subtotal)}</dd></div><div><dt>Delivery</dt><dd>${deliveryFee ? money(deliveryFee) : "Free"}</dd></div>${state.promoApplied ? `<div class="green"><dt>DIVINE8</dt><dd>− ${money(discount)}</dd></div>` : ""}<div class="total"><dt>Total</dt><dd>${money(subtotal + deliveryFee - discount)}</dd></div></dl><div class="summary-safe">✓ <span><strong>Protected purchase</strong><small>Secure payment &amp; careful packaging</small></span></div></aside></div></div>`;
+}
+
+function renderSuccess() {
+  app.innerHTML = `<section class="success-page"><div class="success-card"><span class="success-check">✓</span><span class="eyebrow">Payment confirmed</span><h1>Order Successful!</h1><p>Your order has been placed successfully.</p><div class="success-details"><div><span>Order ID</span><strong>#DC-240814</strong></div><div><span>Order total</span><strong>${money(2040)}</strong></div><div><span>Estimated delivery</span><strong>12–14 August 2026</strong></div></div><button class="btn primary full" data-nav="tracking">View Order →</button><button class="btn white full" data-nav="shop">Continue Shopping</button><button class="share-receipt">↗ Share receipt</button></div><p class="success-note">✦ Thank you for choosing Divine Collection</p></section>`;
+}
+
+function renderTracking() {
+  const statuses = [["Order Placed", "8 Aug · 10:14 AM", true], ["Confirmed", "8 Aug · 10:18 AM", true], ["Packed", "8 Aug · 4:30 PM", true], ["Shipped", "9 Aug · 9:00 AM", true], ["Out for Delivery", "Expected 12 Aug", false], ["Delivered", "Expected 12–14 Aug", false]];
+  const product = productById("3-fit-lion-divine");
+  app.innerHTML = `${pageHero("Your order journey", "Track Order", "Follow your collection from our care to your door.")}<section class="section"><div class="container tracking-layout"><article class="tracking-card"><div class="tracking-head"><div><span>Order #DC-240814</span><h2>Arriving 12–14 August</h2></div><b>♧ Shipped</b></div><div class="timeline">${statuses.map(([label, detail, done]) => `<div class="${done ? "done" : ""}"><span>${done ? "✓" : "□"}</span><p><strong>${label}</strong><small>${detail}</small></p></div>`).join("")}</div></article><aside class="tracking-side"><div class="track-product">${image(product)}<span><strong>${product.name}</strong><small>Qty 1 · ${money(product.price)}</small></span></div><dl><div><dt>Courier</dt><dd>J&amp;T Express</dd></div><div><dt>Tracking number</dt><dd>MYDC88921458</dd></div><div><dt>Shipping address</dt><dd>18, Jalan Damai Perdana 3<br>Kuala Lumpur, Malaysia</dd></div></dl><button class="btn outline full" data-nav="orders">View Order Details</button></aside></div></section>`;
+}
+
+function renderProfile() {
+  if (!state.loggedIn) {
+    app.innerHTML = `<section class="section"><div class="container">${emptyState("○", "Sign in to your account", "Access orders, addresses and your saved pieces.", "Sign In", "login")}</div></section>`;
+    return;
+  }
+  const items = [["▱", "My Orders", "orders"], ["♡", "Wishlist", "wishlist"], ["⌖", "Addresses", "checkout"], ["▤", "Payment Methods", "checkout"], ["⚙", "Settings", "profile"], ["?", "Help & Support", "contact"], ["◇", "Privacy", "privacy"]];
+  app.innerHTML = `${pageHero("Your Divine Collection", "My Account", "Manage your orders, preferences and saved details.")}<section class="section"><div class="container profile-layout"><aside class="profile-card"><span class="avatar">AR<i></i></span><h2>Aishah Rahman</h2><p>aishah.rahman@example.my</p><small class="member">✦ Divine Member</small><button class="btn outline full">✎ Edit Profile</button></aside><div><div class="profile-welcome"><div><span class="eyebrow light">Good afternoon</span><h2>Welcome back, Aishah</h2><p>Your next meaningful piece is waiting.</p></div><b>✦</b></div><div class="account-grid">${items.map(([icon, label, route]) => `<button data-nav="${route}"><span>${icon}</span><strong>${label}</strong><b>›</b></button>`).join("")}</div><button class="logout" id="logout">↪ Logout</button></div></div></section>`;
+}
+
+function renderOrders() {
+  const orders = [["#DC-240814", "8 August 2026", "3-fit-lion-divine", 1850, "Shipped"], ["#DC-231109", "19 July 2026", "standed-steel-accessories", 190, "Delivered"], ["#DC-221876", "2 June 2026", "usb-stone-lighting", 1500, "Confirmed"]];
+  app.innerHTML = `${pageHero("Purchase history", "My Orders", "View, track and revisit your Divine Collection orders.")}<section class="section"><div class="container"><div class="order-filters"><button class="active">All orders</button><button>Processing</button><button>Shipped</button><button>Delivered</button><button>Cancelled</button></div><div class="orders">${orders.map(([id, date, productId, amount, status]) => { const product = productById(productId); return `<article class="order"><header><div><strong>Order ${id}</strong><small>Placed ${date}</small></div><span class="status ${String(status).toLowerCase()}">${status}</span></header><div class="order-body">${image(product)}<span><strong>${product.name}</strong><small>1 item · ${product.category}</small></span><b>${money(amount)}</b></div><footer><button class="btn white" data-nav="tracking">View Order</button>${status !== "Delivered" ? `<button class="btn outline" data-nav="tracking">♧ Track Order</button>` : ""}<button class="btn primary" data-product="${product.id}">Buy Again</button></footer></article>`; }).join("")}</div></div></section>`;
+}
+
+const INFO = {
+  about: ["Our story", "Objects of devotion, chosen with care", "Divine Collection brings premium spiritual and decorative craftsmanship to contemporary Malaysian homes.", [["Meaning in every detail", "We believe a sacred space should feel personal, peaceful and beautifully considered. Our collection balances traditional forms with refined finishes for modern interiors."], ["A thoughtful collection", "Every item is selected for its workmanship, presence and suitability for prayer rooms, offices, gifting and meaningful corners of the home."], ["Care from us to you", "From secure packaging to responsive support, we treat each order with the reverence its purpose deserves."]]],
+  faq: ["Help centre", "Frequently Asked Questions", "Quick answers about orders, delivery, products and care.", [["How long does delivery take?", "Standard delivery across Malaysia usually takes 3–5 business days. Economy and express options are shown at checkout."], ["Can I return an item?", "Eligible unused items in their original packaging may be returned within 7 days. Contact our care team first."], ["Are the product photos accurate?", "We photograph each product carefully. Handmade and decorative finishes may have small variations that make each piece unique."], ["How should I care for my product?", "Use a soft, dry cloth and avoid abrasive cleaners. Product-specific guidance is included on every detail page."]]],
+  privacy: ["Your information", "Privacy Policy", "We collect only the information required to serve you and protect your shopping experience.", [["Information we use", "Contact, delivery and order information is used to process purchases, provide support and improve our service."], ["How we protect it", "Access is restricted, checkout is encrypted and raw payment card details are never stored by Divine Collection."], ["Your choices", "You may request access, correction or deletion of eligible personal information by contacting our care team."]]],
+  terms: ["Shopping with us", "Terms & Conditions", "These terms explain how orders, payments, delivery and use of this website work.", [["Orders and pricing", "All prices are shown in Malaysian Ringgit. Orders are confirmed once payment is authorised and stock is allocated."], ["Product information", "We aim for accurate descriptions and imagery. Decorative finishes and handmade details may vary slightly."], ["Responsible use", "This website may not be misused, copied or interfered with. Malaysian law governs purchases made through Divine Collection."]]],
+  returns: ["Shop with confidence", "Return & Refund Policy", "We want every Divine Collection piece to arrive safely and feel right for your space.", [["7-day returns", "Contact us within 7 days of delivery. Items must be unused, complete and in their original secure packaging."], ["Damaged deliveries", "Photograph the outer packaging and item within 24 hours, then contact us so we can resolve the issue quickly."], ["Refund timing", "Approved refunds are returned to the original payment method, usually within 5–10 business days after inspection."]]]
+};
+
+function renderInfo(page) {
+  const [kicker, title, intro, sections] = INFO[page];
+  app.innerHTML = `${pageHero(kicker, title, intro)}<section class="section"><div class="container info-layout"><aside><div class="brand"><span class="brand-mark">✦</span><span><strong>Divine Collection</strong></span></div><p>Premium spiritual and decorative products for meaningful Malaysian spaces.</p><button class="btn primary" data-nav="contact">Talk to our care team</button></aside><div class="${page === "faq" ? "faq-list" : "info-sections"}">${sections.map(([heading, copy], index) => page === "faq" ? `<details ${index === 0 ? "open" : ""}><summary>${heading}<span>＋</span></summary><p>${copy}</p></details>` : `<article><span>${String(index + 1).padStart(2, "0")}</span><h2>${heading}</h2><p>${copy}</p></article>`).join("")}</div></div></section>`;
+}
+
+function renderContact() {
+  app.innerHTML = `${pageHero("We’re here to help", "Contact Us", "Questions about a piece or an order? Our care team would love to help.")}<section class="section"><div class="container contact-layout"><aside><span class="eyebrow light">Divine care team</span><h2>Let’s find the right answer.</h2><p>We usually respond within one business day.</p><div><b>☎</b><span><strong>Call us</strong><small>+60 3-8892 1418</small></span></div><div><b>✉</b><span><strong>Email us</strong><small>care@divinecollection.my</small></span></div><div><b>⌖</b><span><strong>Visit us</strong><small>Kuala Lumpur, Malaysia</small></span></div></aside><form class="contact-form" id="contact-form"><label><span>Your name</span><input required placeholder="Full name"></label><label><span>Email address</span><input required type="email" placeholder="you@example.com"></label><label><span>Phone</span><input placeholder="+60"></label><label><span>Topic</span><select><option>Product enquiry</option><option>Order support</option><option>Returns</option><option>Other</option></select></label><label class="full-field"><span>Message</span><textarea required rows="6" placeholder="How can we help?"></textarea></label><button class="btn primary">Send message →</button></form></div></section>`;
+}
+
+function renderAuth(mode) {
+  const register = mode === "register";
+  app.innerHTML = `<section class="auth-page"><div class="auth-art"><button class="brand" data-nav="home"><span class="brand-mark">✦</span><span><strong>Divine Collection</strong></span></button><div class="auth-image">${image(productById("lion-divine-home"))}</div><blockquote>✦ “Create a space that feels peaceful, personal and divinely yours.”</blockquote></div><div class="auth-panel"><button data-nav="home">← Back to shop</button><div class="auth-form"><span class="eyebrow">${register ? "Join the collection" : "Welcome back"}</span><h1>${register ? "Create your account" : "Sign in to Divine Collection"}</h1><p>${register ? "Save pieces, track orders and enjoy a smoother checkout." : "Continue to your orders, wishlist and account."}</p><form id="auth-form">${register ? `<label><span>Full name</span><input required placeholder="Your full name"></label>` : ""}<label><span>Email address</span><input required type="email" placeholder="you@example.com"></label>${register ? `<label><span>Phone</span><input required placeholder="+60"></label>` : ""}<label><span>Password</span><input required type="password" minlength="8" placeholder="At least 8 characters"></label>${!register ? `<div class="remember"><label><input type="checkbox"> Remember me</label><button type="button">Forgot password?</button></div>` : ""}<button class="btn primary full">${register ? "Create Account" : "Sign In"} →</button></form><div class="auth-switch">${register ? "Already have an account?" : "New to Divine Collection?"} <button data-nav="${register ? "login" : "register"}">${register ? "Sign in" : "Create account"}</button></div><small class="auth-safe">◇ Secure, protected account access</small></div></div></section>`;
+}
+
+function renderAdmin() {
+  const sections = [["dashboard", "▦", "Dashboard"], ["products", "□", "Products"], ["orders", "▱", "Orders"], ["categories", "▦", "Categories"], ["customers", "○", "Customers"], ["discounts", "%", "Discounts"], ["banners", "✦", "Banners"]];
+  app.innerHTML = `<section class="admin-shell"><aside class="admin-side"><div class="brand brand-dark"><span class="brand-mark">✦</span><span><strong>Divine Collection</strong></span></div><nav>${sections.map(([id, icon, label]) => `<button class="${state.adminSection === id ? "active" : ""}" data-admin="${id}"><span>${icon}</span>${label}${id === "orders" ? "<b>8</b>" : ""}</button>`).join("")}</nav><div class="admin-user"><span>AR</span><p><strong>Aishah R.</strong><small>Administrator</small></p></div></aside><div class="admin-main"><header><div><button class="admin-menu">☰</button><h1>${state.adminSection[0].toUpperCase() + state.adminSection.slice(1)}</h1></div><div><button>⌕ Search</button><button>♢</button><span>AR</span></div></header><div class="admin-content">${adminContent()}</div></div></section>`;
+}
+
+function adminContent() {
+  if (state.adminSection === "products") return adminProducts();
+  if (state.adminSection === "orders") return adminOrders();
+  if (["categories", "customers", "discounts", "banners"].includes(state.adminSection)) return adminSimple();
+  const metrics = [["Total Revenue", "MYR 128,450", "+12.4%", "◇"], ["Total Orders", "384", "+8.2%", "▱"], ["Total Products", state.catalog.length, "All active", "□"], ["Total Customers", "1,248", "+18.6%", "○"]];
+  const bars = [42, 58, 49, 72, 63, 88, 76, 96, 85, 110, 92, 122];
+  return `<div class="admin-title"><div><span>Saturday, 9 August</span><h2>Good afternoon, Aishah</h2><p>Here’s what’s happening with Divine Collection today.</p></div><button class="btn primary" id="admin-add">＋ Add Product</button></div><div class="metrics">${metrics.map(([label, value, trend, icon]) => `<article><div><span>${icon}</span><small>${trend}</small></div><p>${label}</p><strong>${value}</strong></article>`).join("")}</div><div class="admin-grid"><article class="admin-card chart-card"><header><div><h3>Revenue overview</h3><p>Monthly sales performance</p></div><button>Last 12 months</button></header><div class="chart-total"><strong>MYR 128,450</strong><span>+12.4% vs last year</span></div><div class="bar-chart">${bars.map((height, index) => `<div><span style="height:${height}px"></span><small>${["Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"][index]}</small></div>`).join("")}</div></article><article class="admin-card top-products"><header><div><h3>Top products</h3><p>By revenue this month</p></div><button data-admin="products">View all</button></header>${state.catalog.slice(0, 4).map((product, index) => `<div><b>0${index + 1}</b>${image(product)}<span><strong>${product.name}</strong><small>${18 - index * 3} sold</small></span><em>${money(product.price * (18 - index * 3))}</em></div>`).join("")}</article></div><div class="admin-grid lower"><article class="admin-card"><header><div><h3>Recent orders</h3><p>Latest customer activity</p></div><button data-admin="orders">Manage orders</button></header>${adminOrders(true)}</article><article class="admin-card inventory"><header><div><h3>Inventory health</h3><p>Current stock overview</p></div><span>▦</span></header><div class="inventory-ring"><span><strong>${state.catalog.reduce((sum, product) => sum + product.stock, 0)}</strong><small>Total units</small></span></div><p><i class="green-dot"></i>Healthy stock <b>5</b></p><p><i class="gold-dot"></i>Low stock <b>1</b></p><p><i class="red-dot"></i>Out of stock <b>0</b></p></article></div>`;
+}
+
+function adminProducts() {
+  return `<div class="admin-title"><div><span>Catalog management</span><h2>All products</h2><p>Update pricing, stock and product information.</p></div><button class="btn primary" id="admin-add">＋ Add Product</button></div><div class="admin-table"><div class="table-tools"><label>⌕ <input placeholder="Search products"></label><button>☷ Filter</button><button>⇧ Import</button></div><div class="table-scroll"><table><thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead><tbody>${state.catalog.map(product => `<tr><td><div class="table-product">${image(product)}<span><strong>${product.name}</strong><small>${product.sku}</small></span></div></td><td>${product.category}</td><td><strong>${money(product.price)}</strong></td><td>${product.stock}</td><td><span class="status delivered">Active</span></td><td><button data-admin-edit="${product.id}">✎</button><button data-admin-delete="${product.id}">⌫</button></td></tr>`).join("")}</tbody></table></div></div>`;
+}
+
+function adminOrders(compact = false) {
+  const rows = [["#DC-240814", "Aishah Rahman", "MYR 1,850", "Shipped"], ["#DC-240813", "Kavitha M.", "MYR 3,000", "Processing"], ["#DC-240812", "Nur Hana", "MYR 1,500", "Confirmed"], ["#DC-240811", "Arun Kumar", "MYR 2,200", "Delivered"]];
+  const table = `<div class="table-scroll"><table><thead><tr><th>Order</th><th>Customer</th><th>Amount</th><th>Status</th>${compact ? "" : "<th>Actions</th>"}</tr></thead><tbody>${rows.map(row => `<tr><td><strong>${row[0]}</strong></td><td>${row[1]}</td><td>${row[2]}</td><td><span class="status ${row[3].toLowerCase()}">${row[3]}</span></td>${compact ? "" : `<td><select><option>${row[3]}</option><option>Processing</option><option>Confirmed</option><option>Shipped</option><option>Delivered</option></select></td>`}</tr>`).join("")}</tbody></table></div>`;
+  if (compact) return table;
+  return `<div class="admin-title"><div><span>Fulfilment</span><h2>Order management</h2><p>Review orders and keep customers updated.</p></div><button class="btn outline">⇧ Export Orders</button></div><div class="admin-table"><div class="table-tools"><label>⌕ <input placeholder="Search orders"></label><button>☷ Status</button></div>${table}</div>`;
+}
+
+function adminSimple() {
+  const data = {
+    categories: [["Divine Home", "3 products"], ["Temples", "1 product"], ["Accessories", "1 product"], ["Lighting", "1 product"]],
+    customers: [["Aishah Rahman", "3 orders · MYR 3,540"], ["Kavitha M.", "2 orders · MYR 4,350"], ["Nur Hana", "1 order · MYR 1,500"]],
+    discounts: [["DIVINE8", "8% off · Active"], ["WELCOME50", "MYR 50 off · Active"], ["FREESHIP", "Free standard delivery · Scheduled"]],
+    banners: [["Crafted for Divine Spaces", "Homepage · Active"], ["Bring Tradition Home", "Homepage · Active"], ["Premium Spiritual Collection", "Homepage · Draft"]]
+  }[state.adminSection];
+  return `<div class="admin-title"><div><span>Divine Collection</span><h2>Manage ${state.adminSection}</h2><p>Keep this part of the store organised and up to date.</p></div><button class="btn primary">＋ Add new</button></div><div class="simple-grid">${data.map(([title, detail]) => `<article><span>▦</span><div><h3>${title}</h3><p>${detail}</p></div><button>✎</button></article>`).join("")}</div>`;
+}
+
+function routeFromLocation() {
+  const parts = location.pathname.split("/").filter(Boolean);
+  if (!parts.length) return ["home"];
+  if (parts[0] === "product") return ["product", parts[1]];
+  const page = Object.keys(PATHS).find(key => PATHS[key].slice(1) === parts[0]);
+  return [page || "home"];
+}
+
+function go(page, id = "") {
+  const path = page === "product" ? `/product/${id}` : PATHS[page] || "/";
+  history.pushState({}, "", path);
+  menu.classList.remove("open");
+  menuToggle.setAttribute("aria-expanded", "false");
+  render();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function render() {
+  const [page, id] = routeFromLocation();
+  document.body.dataset.page = page;
+  document.querySelector("#site-footer").hidden = ["admin", "login", "register", "success", "checkout"].includes(page);
+  document.querySelector("#bottom-nav").hidden = ["admin", "login", "register", "checkout"].includes(page);
+  document.querySelectorAll("[data-nav]").forEach(button => button.classList.toggle("active", button.dataset.nav === page));
+  const renderers = {
+    home: renderHome, categories: renderCategories, shop: renderShop, product: () => renderProduct(id),
+    search: renderSearch, wishlist: renderWishlist, cart: renderCart, checkout: renderCheckout,
+    success: renderSuccess, tracking: renderTracking, profile: renderProfile, orders: renderOrders,
+    about: () => renderInfo("about"), contact: renderContact, faq: () => renderInfo("faq"),
+    privacy: () => renderInfo("privacy"), terms: () => renderInfo("terms"), returns: () => renderInfo("returns"),
+    login: () => renderAuth("login"), register: () => renderAuth("register"), admin: renderAdmin
+  };
+  (renderers[page] || renderHome)();
+  updateCounts();
+}
+
+function updateCounts() {
+  const count = state.cart.reduce((sum, item) => sum + item.quantity, 0);
+  document.querySelector("#header-cart-count").textContent = count;
+  document.querySelector("#mobile-cart-count").textContent = count;
+}
+
+let toastTimer;
+function notify(message) {
+  toast.textContent = `✓ ${message}`;
+  toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove("show"), 2400);
+}
+
+function addToCart(id, quantity = 1) {
+  const item = state.cart.find(entry => entry.id === id);
+  if (item) item.quantity += quantity;
+  else state.cart.push({ id, quantity });
+  writeStorage();
+  updateCounts();
+  notify("Added to cart");
+}
+
+function toggleWishlist(id) {
+  const index = state.wishlist.indexOf(id);
+  if (index >= 0) {
+    state.wishlist.splice(index, 1);
+    notify("Product removed");
+  } else {
+    state.wishlist.push(id);
+    notify("Added to wishlist");
+  }
+  writeStorage();
+  render();
+}
+
+function openQuickView(id) {
+  const product = productById(id);
+  modalLayer.hidden = false;
+  modalLayer.innerHTML = `<div class="modal-backdrop" data-close-modal><article class="quick-modal" role="dialog" aria-modal="true" aria-label="Quick view ${product.name}"><button class="modal-close" data-close-modal aria-label="Close">×</button>${image(product)}<div><span class="eyebrow">${product.category}</span><h2>${product.name}</h2>${stars(product)}<p>${product.description}</p><strong class="detail-price">${money(product.price)}</strong><div class="button-row"><button class="btn outline" data-product="${product.id}">View details</button><button class="btn primary" data-add="${product.id}">▱ Add to cart</button></div></div></article></div>`;
+  document.body.classList.add("modal-open");
+}
+
+function openProductEditor(id = "") {
+  const product = id ? productById(id) : null;
+  modalLayer.hidden = false;
+  modalLayer.innerHTML = `<div class="modal-backdrop admin-modal" data-close-modal><form class="editor" id="product-editor"><header><div><span>${product ? "Update catalog" : "New catalog item"}</span><h2>${product ? "Edit Product" : "Add Product"}</h2></div><button type="button" data-close-modal>×</button></header><label class="upload"><b>⇧</b><strong>Upload product images</strong><small>PNG or JPG · Main image and gallery</small><input type="file" accept="image/png,image/jpeg" multiple></label><div class="editor-fields"><label class="full-field"><span>Product name</span><input name="name" required value="${product?.name || ""}"></label><label><span>Category</span><select name="category"><option ${product?.category === "Divine Home" ? "selected" : ""}>Divine Home</option><option ${product?.category === "Temples" ? "selected" : ""}>Temples</option><option ${product?.category === "Accessories" ? "selected" : ""}>Accessories</option><option ${product?.category === "Lighting" ? "selected" : ""}>Lighting</option></select></label><label><span>Price (MYR)</span><input name="price" type="number" min="0" step="0.01" required value="${product?.price || ""}"></label><label><span>Stock</span><input name="stock" type="number" min="0" required value="${product?.stock || ""}"></label><label><span>Status</span><select><option>Active</option><option>Draft</option><option>Archived</option></select></label><label class="full-field"><span>Description</span><textarea name="description" rows="4">${product?.description || ""}</textarea></label></div><footer><button type="button" class="btn white" data-close-modal>Cancel</button><button class="btn primary">${product ? "Save Changes" : "Add Product"}</button></footer><input type="hidden" name="id" value="${product?.id || ""}"></form></div>`;
+  document.body.classList.add("modal-open");
+}
+
+function closeModal() {
+  modalLayer.hidden = true;
+  modalLayer.innerHTML = "";
+  document.body.classList.remove("modal-open");
+}
+
+document.addEventListener("click", event => {
+  const nav = event.target.closest("[data-nav]");
+  if (nav) { event.preventDefault(); go(nav.dataset.nav); return; }
+  const product = event.target.closest("[data-product]");
+  if (product) { closeModal(); go("product", product.dataset.product); return; }
+  const add = event.target.closest("[data-add]");
+  if (add) { addToCart(add.dataset.add); return; }
+  const wish = event.target.closest("[data-wishlist]");
+  if (wish) { toggleWishlist(wish.dataset.wishlist); return; }
+  const quick = event.target.closest("[data-quick]");
+  if (quick) { openQuickView(quick.dataset.quick); return; }
+  const category = event.target.closest("[data-category]");
+  if (category) { state.category = category.dataset.category; state.query = ""; go("shop"); return; }
+  const close = event.target.closest("[data-close-modal]");
+  if (close && (close === event.target || close.tagName === "BUTTON")) { closeModal(); return; }
+
+  if (event.target.closest("#reset-filters")) { state.category = ""; state.query = ""; state.maxPrice = 3000; render(); }
+  if (event.target.closest("#clear-category")) { state.category = ""; render(); }
+  if (event.target.closest("#mobile-filter")) document.querySelector(".filters")?.classList.toggle("open");
+
+  const remove = event.target.closest("[data-remove]");
+  if (remove) { state.cart = state.cart.filter(item => item.id !== remove.dataset.remove); writeStorage(); notify("Product removed"); render(); }
+  const plus = event.target.closest("[data-cart-plus]");
+  if (plus) { state.cart.find(item => item.id === plus.dataset.cartPlus).quantity++; writeStorage(); render(); }
+  const minus = event.target.closest("[data-cart-minus]");
+  if (minus) { const item = state.cart.find(entry => entry.id === minus.dataset.cartMinus); item.quantity = Math.max(1, item.quantity - 1); writeStorage(); render(); }
+  if (event.target.closest("#add-wishlist-cart")) { state.wishlist.forEach(id => addToCart(id)); render(); }
+
+  const detailPlus = event.target.closest("[data-detail-plus]");
+  if (detailPlus) document.querySelector("#detail-quantity").textContent = Number(document.querySelector("#detail-quantity").textContent) + 1;
+  const detailMinus = event.target.closest("[data-detail-minus]");
+  if (detailMinus) document.querySelector("#detail-quantity").textContent = Math.max(1, Number(document.querySelector("#detail-quantity").textContent) - 1);
+  const detailAdd = event.target.closest("[data-detail-add]");
+  if (detailAdd) addToCart(detailAdd.dataset.detailAdd, Number(document.querySelector("#detail-quantity").textContent));
+  const buy = event.target.closest("[data-buy]");
+  if (buy) { addToCart(buy.dataset.buy, Number(document.querySelector("#detail-quantity").textContent)); state.checkoutStep = 0; go("checkout"); }
+  if (event.target.closest("#zoom-toggle")) document.querySelector(".main-image .product-image")?.classList.toggle("zoomed");
+  const thumb = event.target.closest("[data-thumb]");
+  if (thumb) { document.querySelectorAll("[data-thumb]").forEach(item => item.classList.remove("active")); thumb.classList.add("active"); document.querySelector(".main-image .product-image img").style.filter = thumb.dataset.thumb === "1" ? "contrast(1.1) saturate(.8)" : thumb.dataset.thumb === "2" ? "brightness(.9) saturate(1.1)" : "none"; }
+  const tab = event.target.closest("[data-tab]");
+  if (tab) { state.activeTab = tab.dataset.tab; renderProduct(routeFromLocation()[1]); }
+
+  if (event.target.closest("#show-new-address")) { document.querySelector(".saved-address").hidden = true; document.querySelector("#address-form").hidden = false; }
+  if (event.target.closest("#checkout-back")) { state.checkoutStep = Math.max(0, state.checkoutStep - 1); renderCheckout(); }
+  if (event.target.closest("#checkout-next")) { if (state.checkoutStep === 3) { state.cart = []; writeStorage(); state.checkoutStep = 0; notify("Order placed successfully"); go("success"); } else { state.checkoutStep++; renderCheckout(); } }
+  const editStep = event.target.closest("[data-checkout-edit]");
+  if (editStep) { state.checkoutStep = Number(editStep.dataset.checkoutEdit); renderCheckout(); }
+
+  if (event.target.closest("#logout")) { state.loggedIn = false; go("login"); }
+  const searchTerm = event.target.closest("[data-search]");
+  if (searchTerm) { state.query = searchTerm.dataset.search; renderSearch(); }
+
+  const admin = event.target.closest("[data-admin]");
+  if (admin) { state.adminSection = admin.dataset.admin; renderAdmin(); }
+  if (event.target.closest("#admin-add")) openProductEditor();
+  const adminEdit = event.target.closest("[data-admin-edit]");
+  if (adminEdit) openProductEditor(adminEdit.dataset.adminEdit);
+  const adminDelete = event.target.closest("[data-admin-delete]");
+  if (adminDelete) { state.catalog = state.catalog.filter(productItem => productItem.id !== adminDelete.dataset.adminDelete); notify("Product removed"); renderAdmin(); }
+});
+
+document.addEventListener("change", event => {
+  if (event.target.matches("input[name='category-filter']")) { state.category = event.target.value; renderShop(); }
+  if (event.target.id === "price-range") { state.maxPrice = Number(event.target.value); renderShop(); }
+  if (event.target.id === "sort-select") { state.sort = event.target.value; renderShop(); }
+  if (event.target.matches("input[name='delivery']")) { state.delivery = event.target.value; renderCheckout(); }
+  if (event.target.matches("input[name='payment']")) { state.payment = event.target.value; renderCheckout(); }
+});
+
+document.addEventListener("input", event => {
+  if (event.target.id === "shop-query") { state.query = event.target.value; window.clearTimeout(event.target._timer); event.target._timer = window.setTimeout(renderShop, 220); }
+});
+
+document.addEventListener("submit", event => {
+  if (event.target.id === "search-form") { event.preventDefault(); state.query = new FormData(event.target).get("query") || document.querySelector("#search-input").value.trim(); renderSearch(); }
+  if (event.target.id === "promo-form") { event.preventDefault(); state.promoApplied = true; renderCheckout(); notify("Promo code applied"); }
+  if (event.target.id === "contact-form") { event.preventDefault(); event.target.outerHTML = `<div class="form-success"><span>✓</span><h2>Message received</h2><p>Thank you. Our care team will be in touch shortly.</p></div>`; }
+  if (event.target.id === "auth-form") { event.preventDefault(); state.loggedIn = true; notify("Welcome to Divine Collection"); go("profile"); }
+  if (event.target.id === "newsletter-form") { event.preventDefault(); event.target.reset(); notify("Thank you for subscribing"); }
+  if (event.target.id === "product-editor") {
+    event.preventDefault();
+    const data = new FormData(event.target);
+    const id = data.get("id");
+    if (id) {
+      const product = productById(id);
+      product.name = data.get("name"); product.category = data.get("category"); product.price = Number(data.get("price")); product.stock = Number(data.get("stock")); product.description = data.get("description");
+      notify("Product updated");
+    } else {
+      state.catalog.push({ ...PRODUCTS[0], id: `custom-${Date.now()}`, name: data.get("name"), category: data.get("category"), price: Number(data.get("price")), stock: Number(data.get("stock")), description: data.get("description"), sku: `DC-${Date.now().toString().slice(-4)}` });
+      notify("Product added");
+    }
+    closeModal(); renderAdmin();
+  }
+});
+
+menuToggle.addEventListener("click", () => {
+  const open = menu.classList.toggle("open");
+  menuToggle.setAttribute("aria-expanded", String(open));
+});
+
+window.addEventListener("popstate", render);
+window.addEventListener("keydown", event => { if (event.key === "Escape") closeModal(); });
+render();
