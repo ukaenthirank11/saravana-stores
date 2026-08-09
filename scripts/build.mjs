@@ -23,7 +23,7 @@ await cp(resolve(root, ".openai", "hosting.json"), resolve(dist, ".openai", "hos
 await cp(resolve(root, "drizzle"), resolve(dist, ".openai", "drizzle"), { recursive: true });
 
 const html = await readFile(resolve(client, "index.html"), "utf8");
-if (!html.includes("Divine Collection") || !html.includes("/app.js") || !html.includes("/styles.css")) {
+if (!html.includes("Divine Collection") || !html.includes("/app.js") || !html.includes("/styles.css") || !html.includes("/manifest.webmanifest")) {
   throw new Error("Static storefront build is incomplete.");
 }
 

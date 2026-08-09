@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#254e18">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Divine Collection">
   <meta name="description" content="Shop premium spiritual, temple and decorative products crafted for peaceful, meaningful spaces across Malaysia.">
   <meta property="og:title" content="Divine Collection | Premium Spiritual & Decorative Products">
   <meta property="og:description" content="Bring Divine Beauty Into Your Space">
@@ -13,9 +17,8 @@
   <meta name="twitter:image" content="https://divine-collection-my.valouraccessa.chatgpt.site/og.png">
   <title>Divine Collection | Premium Spiritual & Decorative Products</title>
   <link rel="icon" href="/og.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="apple-touch-icon" href="/og.png">
+  <link rel="manifest" href="/manifest.webmanifest">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -42,6 +45,7 @@
       </nav>
 
       <div class="header-actions">
+        <button class="install-app" type="button" data-install hidden><span aria-hidden="true">⇩</span><b>Install app</b></button>
         <button class="search-pill" type="button" data-nav="search" aria-label="Search products"><span aria-hidden="true">⌕</span><b>Search divine pieces</b></button>
         <button class="icon-button" type="button" data-nav="wishlist" aria-label="Wishlist">♡</button>
         <button class="icon-button badge-button" type="button" data-nav="cart" aria-label="Shopping cart">▱<span id="header-cart-count">0</span></button>
@@ -55,6 +59,7 @@
       <button data-nav="shop">Shop <span>→</span></button>
       <button data-nav="about">About <span>→</span></button>
       <button data-nav="contact">Contact <span>→</span></button>
+      <button data-install hidden>Install mobile app <span>⇩</span></button>
       <button data-nav="admin">Admin portal <span>→</span></button>
     </nav>
   </header>
@@ -85,6 +90,7 @@
   </nav>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="network-status" id="network-status" role="status" aria-live="polite" hidden></div>
   <div class="modal-layer" id="modal-layer" hidden></div>
   <script src="/app.js" defer></script>
 </body>

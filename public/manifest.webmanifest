@@ -1,0 +1,24 @@
+{
+  "name": "Divine Collection",
+  "short_name": "Divine",
+  "description": "Premium spiritual, temple and decorative products for Malaysia.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f8f6f0",
+  "theme_color": "#254e18",
+  "icons": [
+    {
+      "src": "/og.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    { "name": "Shop collection", "short_name": "Shop", "url": "/shop" },
+    { "name": "My cart", "short_name": "Cart", "url": "/cart" },
+    { "name": "Track order", "short_name": "Track", "url": "/order-tracking" }
+  ]
+}

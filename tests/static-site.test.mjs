@@ -15,19 +15,22 @@ test("uses a framework-free HTML, CSS and JavaScript storefront", async () => {
   assert.match(html, /<!doctype html>/i);
   assert.match(html, /<link rel="stylesheet" href="\/styles\.css">/);
   assert.match(html, /<script src="\/app\.js" defer><\/script>/);
+  assert.match(html, /manifest\.webmanifest/);
   assert.match(css, /--green:\s*#72b900/);
   assert.match(js, /3 FIT LION DIVINE/);
   assert.match(js, /MYR/);
+  assert.match(js, /\/api\/checkout\/session/);
+  assert.match(js, /serviceWorker\.register/);
   assert.doesNotMatch(packageJson, /react|next|vinext|tailwind/i);
 });
 
 test("build output contains the static site and Cloudflare worker", async () => {
-  for (const path of ["dist/client/index.html", "dist/client/styles.css", "dist/client/app.js", "dist/client/og.png", "dist/client/divine-products-reference.png", "dist/server/index.js", "dist/server/wrangler.json", "dist/.openai/hosting.json"]) {
+  for (const path of ["dist/client/index.html", "dist/client/styles.css", "dist/client/app.js", "dist/client/manifest.webmanifest", "dist/client/sw.js", "dist/client/og.png", "dist/client/divine-products-reference.png", "dist/server/index.js", "dist/server/wrangler.json", "dist/.openai/hosting.json"]) {
     await access(new URL(path, root));
   }
 
   const worker = await import(new URL(`dist/server/index.js?test=${Date.now()}`, root));
   const response = await worker.default.fetch(new Request("https://example.test/api/health"), { ASSETS: { fetch: () => new Response("Not found", { status: 404 }) } });
-  assert.equal(response.status, 200);
-  assert.equal((await response.json()).stack, "HTML, CSS, JavaScript");
+  assert.equal(response.status, 503);
+  assert.equal((await response.json()).stack, "HTML, CSS, JavaScript + FastAPI");
 });

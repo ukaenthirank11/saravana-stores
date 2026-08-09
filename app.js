@@ -100,6 +100,9 @@ const toast = document.querySelector("#toast");
 const modalLayer = document.querySelector("#modal-layer");
 const menu = document.querySelector("#mobile-menu");
 const menuToggle = document.querySelector("#menu-toggle");
+const networkStatus = document.querySelector("#network-status");
+const API_BASE = String(window.DIVINE_API_BASE || "").replace(/\/$/, "");
+let installPromptEvent = null;
 
 const state = {
   cart: readStorage("divine-cart", [{ id: "3-fit-lion-divine", quantity: 1 }, { id: "standed-steel-accessories", quantity: 1 }]),
@@ -111,8 +114,21 @@ const state = {
   maxPrice: 3000,
   checkoutStep: 0,
   delivery: "standard",
-  payment: "wallet",
+  payment: "stripe",
   promoApplied: false,
+  checkoutBusy: false,
+  paymentRuntime: "checking",
+  lastOrder: readStorage("divine-last-order", null),
+  shippingAddress: {
+    full_name: "Aishah Rahman",
+    email: "aishah.rahman@example.my",
+    phone: "+60 12-345 6789",
+    address: "18, Jalan Damai Perdana 3, Bandar Damai Perdana",
+    city: "Kuala Lumpur",
+    state: "Kuala Lumpur",
+    postal_code: "56000",
+    country: "Malaysia"
+  },
   adminSection: "dashboard",
   loggedIn: true,
   activeTab: "description"
@@ -271,21 +287,110 @@ function checkoutSteps() {
 
 function checkoutStage() {
   if (state.checkoutStep === 1) return `<div class="stage-head"><span>02</span><div><h1>Delivery method</h1><p>Choose the timing that suits you.</p></div></div><div class="choice-list">${[["economy", "Economy", "5–7 business days", 0], ["standard", "Standard", "3–5 business days", 12], ["express", "Express", "1–2 business days", 35]].map(([id, label, detail, price]) => `<label class="${state.delivery === id ? "selected" : ""}"><input type="radio" name="delivery" value="${id}" ${state.delivery === id ? "checked" : ""}><span class="choice-icon">♧</span><span><strong>${label}</strong><small>${detail}</small></span><b>${price ? money(price) : "Free"}</b></label>`).join("")}</div><div class="promo-box"><div><span>％</span><p><strong>Have a Promo Code?</strong><small>Apply it before continuing.</small></p></div><form id="promo-form"><input required placeholder="Enter promo code"><button>Apply</button></form>${state.promoApplied ? `<small class="promo-ok">✓ DIVINE8 applied — you saved ${money(Math.min(100, cartSubtotal() * .08))}.</small>` : ""}</div>`;
-  if (state.checkoutStep === 2) return `<div class="stage-head"><span>03</span><div><h1>Payment</h1><p>Select a secure payment method.</p></div></div><div class="choice-list payment-list">${[["wallet", "▣", "My Wallet", `Balance: ${money(3210)}`], ["paypal", "P", "PayPal", "Fast, protected checkout"], ["gpay", "G", "Google Pay", "Use your saved payment"], ["apple", "●", "Apple Pay", "Pay from your Apple device"], ["card", "▤", "Mastercard / Visa", "Credit or debit card"]].map(([id, icon, label, detail]) => `<label class="${state.payment === id ? "selected" : ""}"><span class="choice-icon">${icon}</span><span><strong>${label}</strong><small>${detail}</small></span><input type="radio" name="payment" value="${id}" ${state.payment === id ? "checked" : ""}></label>`).join("")}</div><div class="payment-safety">◇ <span><strong>Your payment is protected</strong><small>Payment information is encrypted and card details are never stored.</small></span></div>`;
-  if (state.checkoutStep === 3) return `<div class="stage-head"><span>04</span><div><h1>Review &amp; confirm</h1><p>One last look before placing your order.</p></div></div><div class="review-list"><div><b>⌖</b><span><strong>Delivery to</strong><small>Aishah Rahman · Kuala Lumpur, Malaysia</small></span><button data-checkout-edit="0">Edit</button></div><div><b>♧</b><span><strong>${state.delivery[0].toUpperCase() + state.delivery.slice(1)} delivery</strong><small>Estimated arrival: 12–14 August</small></span><button data-checkout-edit="1">Edit</button></div><div><b>▤</b><span><strong>${state.payment === "wallet" ? "My Wallet" : state.payment === "card" ? "Mastercard / Visa" : state.payment}</strong><small>Secure payment</small></span><button data-checkout-edit="2">Edit</button></div></div><label class="terms-check"><input type="checkbox" checked> I agree to the Terms &amp; Conditions and Return Policy.</label>`;
-  return `<div class="stage-head"><span>01</span><div><h1>Shipping address</h1><p>Where should we send your collection?</p></div></div><div class="address-tabs"><button class="active">Saved address</button><button id="show-new-address">＋ Add new address</button></div><div class="saved-address"><i></i><div><strong>Aishah Rahman</strong><p>18, Jalan Damai Perdana 3<br>Bandar Damai Perdana, 56000 Kuala Lumpur<br>Malaysia · +60 12-345 6789</p><span>Home</span></div><button>✎</button></div><form class="address-form" id="address-form" hidden><label><span>Full Name</span><input required placeholder="Your full name"></label><label><span>Phone</span><input required placeholder="+60 12-345 6789"></label><label class="full-field"><span>Address</span><input required placeholder="Street address"></label><label><span>City</span><input required placeholder="Kuala Lumpur"></label><label><span>State</span><select><option>Kuala Lumpur</option><option>Selangor</option><option>Johor</option><option>Penang</option></select></label><label><span>Postal Code</span><input required placeholder="56000"></label><label><span>Country</span><select><option>Malaysia</option></select></label></form>`;
+  if (state.checkoutStep === 2) return `<div class="stage-head"><span>03</span><div><h1>Secure payment</h1><p>Complete payment on Stripe's protected checkout.</p></div></div><div class="choice-list payment-list"><label class="selected stripe-choice"><span class="choice-icon stripe-mark">S</span><span><strong>Stripe secure checkout</strong><small>Cards, FPX and eligible digital wallets are shown securely by Stripe.</small></span><input type="radio" name="payment" value="stripe" checked></label></div><div class="payment-method-row" aria-label="Supported payment types"><span>VISA</span><span>Mastercard</span><span>FPX</span><span>Apple Pay</span><span>G Pay</span></div><div class="payment-runtime ${state.paymentRuntime}"><span></span><p><strong>${state.paymentRuntime === "stripe" ? "Live payment gateway ready" : state.paymentRuntime === "demo" ? "Safe preview mode" : state.paymentRuntime === "offline" ? "Payment service unavailable" : "Checking payment service"}</strong><small>${state.paymentRuntime === "stripe" ? "You will continue to Stripe to authorize payment." : state.paymentRuntime === "demo" ? "Checkout can be tested without making a real charge." : state.paymentRuntime === "offline" ? "Start the FastAPI service to continue checkout." : "Confirming the secure connection…"}</small></p></div><div class="payment-safety">◇ <span><strong>Your payment is protected</strong><small>Prices are recalculated by the server. Divine Collection never receives or stores raw card details.</small></span></div>`;
+  if (state.checkoutStep === 3) return `<div class="stage-head"><span>04</span><div><h1>Review &amp; confirm</h1><p>One last look before opening secure payment.</p></div></div><div class="review-list"><div><b>⌖</b><span><strong>Delivery to</strong><small>${state.shippingAddress.full_name} · ${state.shippingAddress.city}, ${state.shippingAddress.country}</small></span><button data-checkout-edit="0">Edit</button></div><div><b>♧</b><span><strong>${state.delivery[0].toUpperCase() + state.delivery.slice(1)} delivery</strong><small>Estimated arrival: 12–14 August</small></span><button data-checkout-edit="1">Edit</button></div><div><b>▤</b><span><strong>Stripe secure checkout</strong><small>Available methods will be shown on the payment page.</small></span><button data-checkout-edit="2">Edit</button></div></div><label class="terms-check"><input id="checkout-terms" type="checkbox" checked> I agree to the Terms &amp; Conditions and Return Policy.</label>`;
+  return `<div class="stage-head"><span>01</span><div><h1>Shipping address</h1><p>Where should we send your collection?</p></div></div><div class="address-tabs"><button class="active" type="button">Saved address</button><button id="show-new-address" type="button">＋ Add new address</button></div><div class="saved-address"><i></i><div><strong>${state.shippingAddress.full_name}</strong><p>${state.shippingAddress.address}<br>${state.shippingAddress.postal_code} ${state.shippingAddress.city}<br>${state.shippingAddress.country} · ${state.shippingAddress.phone}</p><span>Home</span></div><button type="button" aria-label="Edit saved address">✎</button></div><form class="address-form" id="address-form" hidden><label><span>Full Name</span><input name="full_name" required autocomplete="name" value="${state.shippingAddress.full_name}"></label><label><span>Email</span><input name="email" required type="email" autocomplete="email" value="${state.shippingAddress.email}"></label><label><span>Phone</span><input name="phone" required autocomplete="tel" value="${state.shippingAddress.phone}"></label><label class="full-field"><span>Address</span><input name="address" required autocomplete="street-address" value="${state.shippingAddress.address}"></label><label><span>City</span><input name="city" required autocomplete="address-level2" value="${state.shippingAddress.city}"></label><label><span>State</span><select name="state" autocomplete="address-level1"><option ${state.shippingAddress.state === "Kuala Lumpur" ? "selected" : ""}>Kuala Lumpur</option><option ${state.shippingAddress.state === "Selangor" ? "selected" : ""}>Selangor</option><option ${state.shippingAddress.state === "Johor" ? "selected" : ""}>Johor</option><option ${state.shippingAddress.state === "Penang" ? "selected" : ""}>Penang</option></select></label><label><span>Postal Code</span><input name="postal_code" required autocomplete="postal-code" value="${state.shippingAddress.postal_code}"></label><label><span>Country</span><select name="country" autocomplete="country-name"><option>Malaysia</option></select></label></form>`;
 }
 
 function renderCheckout() {
+  if (!state.cart.length) {
+    app.innerHTML = `<div class="checkout-page"><div class="checkout-brand"><button data-nav="cart">← Back</button><div class="brand"><span class="brand-mark">✦</span><span><strong>Divine Collection</strong></span></div><span>◇ Secure checkout</span></div><div class="container checkout-empty">${emptyState("▱", "Your cart is empty", "Add a meaningful piece before starting payment.", "Shop Collection", "shop")}</div></div>`;
+    return;
+  }
   const items = cartItems().length ? cartItems() : [{ product: productById("3-fit-lion-divine"), quantity: 1 }];
   const subtotal = cartSubtotal() || 1850;
   const deliveryFee = state.delivery === "express" ? 35 : state.delivery === "standard" ? 12 : 0;
   const discount = state.promoApplied ? Math.min(100, subtotal * .08) : 0;
-  app.innerHTML = `<div class="checkout-page"><div class="checkout-brand"><button data-nav="cart">← Back</button><div class="brand"><span class="brand-mark">✦</span><span><strong>Divine Collection</strong></span></div><span>◇ Secure checkout</span></div><div class="container checkout-progress">${checkoutSteps()}</div><div class="container checkout-layout"><section class="checkout-card"><div id="checkout-stage">${checkoutStage()}</div><div class="checkout-actions">${state.checkoutStep ? `<button class="btn white" id="checkout-back">Back</button>` : ""}<button class="btn primary" id="checkout-next">${state.checkoutStep === 3 ? "Place Order ◇" : "Continue →"}</button></div></section><aside class="checkout-summary"><h2>Order summary <small>${items.length} items</small></h2><div class="checkout-items">${items.map(({ product, quantity }) => `<div>${image(product)}<span><strong>${product.name}</strong><small>Qty ${quantity}</small></span><b>${money(product.price * quantity)}</b></div>`).join("")}</div><dl><div><dt>Subtotal</dt><dd>${money(subtotal)}</dd></div><div><dt>Delivery</dt><dd>${deliveryFee ? money(deliveryFee) : "Free"}</dd></div>${state.promoApplied ? `<div class="green"><dt>DIVINE8</dt><dd>− ${money(discount)}</dd></div>` : ""}<div class="total"><dt>Total</dt><dd>${money(subtotal + deliveryFee - discount)}</dd></div></dl><div class="summary-safe">✓ <span><strong>Protected purchase</strong><small>Secure payment &amp; careful packaging</small></span></div></aside></div></div>`;
+  app.innerHTML = `<div class="checkout-page"><div class="checkout-brand"><button data-nav="cart">← Back</button><div class="brand"><span class="brand-mark">✦</span><span><strong>Divine Collection</strong></span></div><span>◇ Secure checkout</span></div><div class="container checkout-progress">${checkoutSteps()}</div><div class="container checkout-layout"><section class="checkout-card"><div id="checkout-stage">${checkoutStage()}</div><div class="checkout-actions">${state.checkoutStep ? `<button class="btn white" id="checkout-back" ${state.checkoutBusy ? "disabled" : ""}>Back</button>` : ""}<button class="btn primary" id="checkout-next" ${state.checkoutBusy ? "disabled aria-busy=\"true\"" : ""}>${state.checkoutBusy ? "Opening secure payment…" : state.checkoutStep === 3 ? "Continue to Payment ◇" : "Continue →"}</button></div></section><aside class="checkout-summary"><h2>Order summary <small>${items.length} items</small></h2><div class="checkout-items">${items.map(({ product, quantity }) => `<div>${image(product)}<span><strong>${product.name}</strong><small>Qty ${quantity}</small></span><b>${money(product.price * quantity)}</b></div>`).join("")}</div><dl><div><dt>Subtotal</dt><dd>${money(subtotal)}</dd></div><div><dt>Delivery</dt><dd>${deliveryFee ? money(deliveryFee) : "Free"}</dd></div>${state.promoApplied ? `<div class="green"><dt>DIVINE8</dt><dd>− ${money(discount)}</dd></div>` : ""}<div class="total"><dt>Total</dt><dd>${money(subtotal + deliveryFee - discount)}</dd></div></dl><div class="summary-safe">✓ <span><strong>Server-verified total</strong><small>Prices and stock are checked again before payment.</small></span></div></aside></div></div>`;
+}
+
+function captureShippingAddress() {
+  const form = document.querySelector("#address-form");
+  if (!form || form.hidden) return true;
+  if (!form.reportValidity()) return false;
+  const data = new FormData(form);
+  state.shippingAddress = Object.fromEntries(["full_name", "email", "phone", "address", "city", "state", "postal_code", "country"].map(key => [key, String(data.get(key) || "").trim()]));
+  return true;
+}
+
+function checkoutPayload() {
+  return {
+    items: state.cart.map(item => ({ product_id: item.id, quantity: item.quantity })),
+    delivery: state.delivery,
+    promo_code: state.promoApplied ? "DIVINE8" : null,
+    customer: state.shippingAddress
+  };
+}
+
+function apiErrorMessage(payload, fallback) {
+  if (typeof payload?.detail === "string") return payload.detail;
+  if (Array.isArray(payload?.detail)) return payload.detail.map(item => item.msg).join(" · ");
+  return fallback;
+}
+
+async function beginPayment() {
+  if (state.checkoutBusy) return;
+  if (!document.querySelector("#checkout-terms")?.checked) {
+    notify("Please accept the checkout terms");
+    return;
+  }
+  state.checkoutBusy = true;
+  renderCheckout();
+  try {
+    const response = await fetch(`${API_BASE}/api/checkout/session`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(checkoutPayload())
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(apiErrorMessage(result, "Secure checkout could not be started."));
+    state.lastOrder = result;
+    localStorage.setItem("divine-last-order", JSON.stringify(result));
+    window.location.assign(result.checkout_url);
+  } catch (error) {
+    state.checkoutBusy = false;
+    renderCheckout();
+    notify(error.message || "Payment service unavailable");
+  }
 }
 
 function renderSuccess() {
-  app.innerHTML = `<section class="success-page"><div class="success-card"><span class="success-check">✓</span><span class="eyebrow">Payment confirmed</span><h1>Order Successful!</h1><p>Your order has been placed successfully.</p><div class="success-details"><div><span>Order ID</span><strong>#DC-240814</strong></div><div><span>Order total</span><strong>${money(2040)}</strong></div><div><span>Estimated delivery</span><strong>12–14 August 2026</strong></div></div><button class="btn primary full" data-nav="tracking">View Order →</button><button class="btn white full" data-nav="shop">Continue Shopping</button><button class="share-receipt">↗ Share receipt</button></div><p class="success-note">✦ Thank you for choosing Divine Collection</p></section>`;
+  app.innerHTML = `<section class="success-page"><div class="success-card success-loading"><span class="success-spinner" aria-hidden="true"></span><span class="eyebrow">Secure checkout</span><h1>Confirming your order</h1><p>We are checking the payment result with the commerce service.</p></div></section>`;
+  hydrateOrderSuccess();
+}
+
+async function fetchOrderWithRetry(orderId, retries = 3) {
+  const response = await fetch(`${API_BASE}/api/orders/${encodeURIComponent(orderId)}`);
+  if (!response.ok) throw new Error("Order confirmation could not be loaded.");
+  const order = await response.json();
+  if (["pending", "awaiting_payment"].includes(order.status) && retries > 0) {
+    await new Promise(resolve => window.setTimeout(resolve, 1200));
+    return fetchOrderWithRetry(orderId, retries - 1);
+  }
+  return order;
+}
+
+async function hydrateOrderSuccess() {
+  const params = new URLSearchParams(window.location.search);
+  const orderId = params.get("order_id") || state.lastOrder?.order_id;
+  if (!orderId) {
+    app.innerHTML = `<section class="success-page"><div class="success-card"><span class="success-check warning">!</span><span class="eyebrow">Order not found</span><h1>We need your order reference</h1><p>Return to your cart and start secure checkout again.</p><button class="btn primary full" data-nav="cart">Return to Cart</button></div></section>`;
+    return;
+  }
+  try {
+    const order = await fetchOrderWithRetry(orderId);
+    const paid = ["paid", "paid_demo"].includes(order.status);
+    if (paid) {
+      state.cart = [];
+      writeStorage();
+    }
+    const demo = order.status === "paid_demo";
+    app.innerHTML = `<section class="success-page"><div class="success-card"><span class="success-check ${paid ? "" : "warning"}">${paid ? "✓" : "⌛"}</span><span class="eyebrow">${demo ? "Preview payment approved" : paid ? "Payment confirmed" : "Payment processing"}</span><h1>${paid ? "Order Successful!" : "Your payment is processing"}</h1><p>${demo ? "The complete order flow worked. No real charge was made in preview mode." : paid ? "Your payment was verified and your order is now confirmed." : "We have your order and will update it as soon as the payment provider confirms it."}</p>${demo ? `<div class="demo-payment-note">Test mode · No money was charged</div>` : ""}<div class="success-details"><div><span>Order ID</span><strong>${order.id}</strong></div><div><span>Order total</span><strong>MYR ${order.total_myr}</strong></div><div><span>Payment status</span><strong>${order.status.replaceAll("_", " ")}</strong></div></div><button class="btn primary full" data-nav="tracking">View Order →</button><button class="btn white full" data-nav="shop">Continue Shopping</button><button class="share-receipt">↗ Share receipt</button></div><p class="success-note">✦ Thank you for choosing Divine Collection</p></section>`;
+    window.scrollTo({ top: 0, behavior: "auto" });
+  } catch (error) {
+    app.innerHTML = `<section class="success-page"><div class="success-card"><span class="success-check warning">!</span><span class="eyebrow">Confirmation delayed</span><h1>Your order needs a moment</h1><p>${error.message}</p><button class="btn primary full" data-nav="orders">View My Orders</button><button class="btn white full" data-nav="contact">Contact Support</button></div></section>`;
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }
 }
 
 function renderTracking() {
@@ -457,6 +562,19 @@ function closeModal() {
 }
 
 document.addEventListener("click", event => {
+  const installButton = event.target.closest("[data-install]");
+  if (installButton) {
+    if (installPromptEvent) {
+      installPromptEvent.prompt();
+      installPromptEvent.userChoice.finally(() => {
+        installPromptEvent = null;
+        document.querySelectorAll("[data-install]").forEach(button => { button.hidden = true; });
+      });
+    } else {
+      notify("Use your browser menu and choose Add to Home Screen");
+    }
+    return;
+  }
   const nav = event.target.closest("[data-nav]");
   if (nav) { event.preventDefault(); go(nav.dataset.nav); return; }
   const product = event.target.closest("[data-product]");
@@ -498,9 +616,13 @@ document.addEventListener("click", event => {
   const tab = event.target.closest("[data-tab]");
   if (tab) { state.activeTab = tab.dataset.tab; renderProduct(routeFromLocation()[1]); }
 
-  if (event.target.closest("#show-new-address")) { document.querySelector(".saved-address").hidden = true; document.querySelector("#address-form").hidden = false; }
+  if (event.target.closest("#show-new-address") || event.target.closest(".saved-address > button")) { document.querySelector(".saved-address").hidden = true; document.querySelector("#address-form").hidden = false; }
   if (event.target.closest("#checkout-back")) { state.checkoutStep = Math.max(0, state.checkoutStep - 1); renderCheckout(); }
-  if (event.target.closest("#checkout-next")) { if (state.checkoutStep === 3) { state.cart = []; writeStorage(); state.checkoutStep = 0; notify("Order placed successfully"); go("success"); } else { state.checkoutStep++; renderCheckout(); } }
+  if (event.target.closest("#checkout-next")) {
+    if (state.checkoutStep === 0 && !captureShippingAddress()) return;
+    if (state.checkoutStep === 3) beginPayment();
+    else { state.checkoutStep++; renderCheckout(); }
+  }
   const editStep = event.target.closest("[data-checkout-edit]");
   if (editStep) { state.checkoutStep = Number(editStep.dataset.checkoutEdit); renderCheckout(); }
 
@@ -558,4 +680,41 @@ menuToggle.addEventListener("click", () => {
 
 window.addEventListener("popstate", render);
 window.addEventListener("keydown", event => { if (event.key === "Escape") closeModal(); });
+
+async function detectPaymentRuntime() {
+  try {
+    const response = await fetch(`${API_BASE}/api/health`, { headers: { Accept: "application/json" } });
+    const health = await response.json();
+    state.paymentRuntime = response.ok && health.payment_mode === "stripe" && health.stripe_ready ? "stripe" : response.ok && health.payment_mode === "demo" ? "demo" : "offline";
+  } catch {
+    state.paymentRuntime = "offline";
+  }
+  if (routeFromLocation()[0] === "checkout" && state.checkoutStep === 2) renderCheckout();
+}
+
+function updateNetworkState() {
+  const offline = !navigator.onLine;
+  networkStatus.hidden = !offline;
+  networkStatus.textContent = offline ? "You are offline — browsing still works, but payment needs a connection." : "";
+  document.body.classList.toggle("is-offline", offline);
+}
+
+window.addEventListener("beforeinstallprompt", event => {
+  event.preventDefault();
+  installPromptEvent = event;
+  document.querySelectorAll("[data-install]").forEach(button => { button.hidden = false; });
+});
+window.addEventListener("appinstalled", () => notify("Divine Collection installed"));
+window.addEventListener("online", () => { updateNetworkState(); detectPaymentRuntime(); });
+window.addEventListener("offline", updateNetworkState);
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));
+}
+
 render();
+updateNetworkState();
+detectPaymentRuntime();
+if (routeFromLocation()[0] === "checkout" && new URLSearchParams(location.search).get("payment") === "cancelled") {
+  notify("Payment was cancelled — your cart is still saved");
+}
