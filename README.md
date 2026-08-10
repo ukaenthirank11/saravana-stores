@@ -9,6 +9,7 @@ The customer and admin interfaces are framework-free:
 - `index.html` — semantic page shell and metadata
 - `styles.css` — complete responsive design system
 - `app.js` — catalog, navigation, filters, wishlist, cart, API checkout and admin interactions
+- `assets/` — the original supplied product photographs and catalogue reference images
 - `public/manifest.webmanifest` and `public/sw.js` — installable app and offline storefront shell
 
 No React, Next.js, Tailwind or front-end runtime dependencies are used.

@@ -15,6 +15,7 @@ for (const file of ["index.html", "styles.css", "app.js"]) {
 }
 
 await cp(resolve(root, "public"), client, { recursive: true });
+await cp(resolve(root, "assets"), resolve(client, "assets"), { recursive: true });
 await cp(resolve(root, "worker", "index.js"), resolve(server, "index.js"));
 await cp(resolve(root, "worker", "wrangler.json"), resolve(server, "wrangler.json"));
 

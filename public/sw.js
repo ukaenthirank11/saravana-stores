@@ -1,12 +1,16 @@
-const CACHE_NAME = "divine-collection-v3";
+const CACHE_NAME = "divine-collection-v4";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/styles.css",
   "/app.js",
   "/manifest.webmanifest",
-  "/og.png",
-  "/divine-products-reference.png"
+  "/assets/Screenshot%202026-08-10%20221541.png",
+  "/assets/Screenshot%202026-08-10%20221614.png",
+  "/assets/Screenshot%202026-08-10%20221645.png",
+  "/assets/Screenshot%202026-08-10%20221721.png",
+  "/assets/Screenshot%202026-08-10%20221746.png",
+  "/assets/Screenshot%202026-08-10%20221814.png"
 ];
 
 self.addEventListener("install", event => {

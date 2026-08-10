@@ -8,7 +8,10 @@ const PRODUCTS = [
     rating: 4.8,
     reviews: 32,
     sku: "DC-LD-3001",
-    crop: [601, 66, 180, 191],
+    image: "/assets/Screenshot 2026-08-10 221541.png",
+    imageWidth: 302,
+    imageHeight: 534,
+    imageOrientation: "portrait",
     description: "Premium 3 Fit Lion Divine temple décor designed for home, office, and pooja spaces. Elegant craftsmanship with a traditional spiritual appearance.",
     features: ["Premium quality materials", "Elegant traditional design", "Suitable for home and office", "Ideal for pooja rooms", "Premium decorative finish", "Suitable for gifting"]
   },
@@ -21,7 +24,10 @@ const PRODUCTS = [
     rating: 4.9,
     reviews: 27,
     sku: "DC-GB-3002",
-    crop: [816, 66, 179, 191],
+    image: "/assets/Screenshot 2026-08-10 221614.png",
+    imageWidth: 240,
+    imageHeight: 536,
+    imageOrientation: "portrait",
     description: "A premium golden-black 3 Fit Divine temple decoration designed to add an elegant spiritual atmosphere to homes, offices, and pooja rooms.",
     features: ["Durable construction", "Antique golden finish", "Traditional spiritual design", "Premium appearance", "Easy to maintain", "Suitable for home temples"]
   },
@@ -34,7 +40,10 @@ const PRODUCTS = [
     rating: 4.9,
     reviews: 45,
     sku: "DC-LH-3003",
-    crop: [383, 637, 183, 150],
+    image: "/assets/Screenshot 2026-08-10 221645.png",
+    imageWidth: 289,
+    imageHeight: 520,
+    imageOrientation: "portrait",
     description: "A large premium Lion Divine Home temple designed as an elegant centerpiece for spiritual spaces.",
     features: ["Spacious design", "High-quality construction", "Traditional craftsmanship", "Premium decorative finish", "Suitable for home temples", "Elegant spiritual appearance"]
   },
@@ -47,7 +56,10 @@ const PRODUCTS = [
     rating: 4.7,
     reviews: 18,
     sku: "DC-SA-0019",
-    crop: [601, 637, 181, 149],
+    image: "/assets/Screenshot 2026-08-10 221721.png",
+    imageWidth: 298,
+    imageHeight: 307,
+    imageOrientation: "square",
     description: "Premium standing steel spiritual accessories designed for temple and devotional spaces.",
     features: ["High-grade steel", "Rust-resistant", "Premium finish", "Durable construction", "Strong and stable", "Decorative appearance"]
   },
@@ -60,7 +72,10 @@ const PRODUCTS = [
     rating: 4.8,
     reviews: 23,
     sku: "DC-UL-1500",
-    crop: [816, 637, 178, 149],
+    image: "/assets/Screenshot 2026-08-10 221746.png",
+    imageWidth: 506,
+    imageHeight: 513,
+    imageOrientation: "square",
     description: "USB-powered stone lighting with a divine decorative design that creates a peaceful and attractive atmosphere.",
     features: ["USB powered", "Energy efficient", "Beautiful illumination", "Premium decorative design", "Easy to use", "Suitable for gifting"]
   },
@@ -73,7 +88,10 @@ const PRODUCTS = [
     rating: 4.8,
     reviews: 31,
     sku: "DC-LT-1500",
-    crop: [383, 1083, 183, 113],
+    image: "/assets/Screenshot 2026-08-10 221814.png",
+    imageWidth: 605,
+    imageHeight: 532,
+    imageOrientation: "landscape",
     description: "Premium Lion Golden Temple suitable for indoor and outdoor spiritual spaces with an elegant golden finish.",
     features: ["Weather resistant", "Premium golden finish", "Strong and durable", "Traditional design", "Suitable for indoor and outdoor use", "Easy to maintain"]
   }
@@ -152,11 +170,9 @@ function productById(id) {
 }
 
 function image(product, className = "") {
-  const [x, y, w, h] = product.crop;
-  const width = (1023 / w) * 100;
-  const left = (-x / w) * 100;
-  const top = (-y / h) * 100;
-  return `<div class="product-image ${className}" style="aspect-ratio:${w}/${h}"><img src="/divine-products-reference.png" alt="${product.name}" style="width:${width}%;left:${left}%;top:${top}%"></div>`;
+  const src = encodeURI(product.image);
+  const priority = className.includes("hero-image");
+  return `<div class="product-image ${product.imageOrientation} ${className}" data-product-image="${product.id}" style="--product-photo:url('${src}')"><img src="${src}" alt="${product.name} original product photograph" width="${product.imageWidth}" height="${product.imageHeight}" loading="${priority ? "eager" : "lazy"}" decoding="async" ${priority ? 'fetchpriority="high"' : ""}></div>`;
 }
 
 function stars(product) {
@@ -219,7 +235,7 @@ function renderHome() {
 }
 
 function renderCategories() {
-  app.innerHTML = `${pageHero("Curated by purpose", "Categories", "Explore pieces for prayer rooms, peaceful interiors and meaningful gifting.")}<section class="section"><div class="container categories-large">${CATEGORIES.map(([name, count, id], index) => `<article class="category-large ${index === 0 ? "wide" : ""}">${image(productById(id))}<div><span>${String(count).padStart(2, "0")} curated ${count === 1 ? "piece" : "pieces"}</span><h2>${name}</h2><button class="btn white" data-category="${name}">View Products →</button></div></article>`).join("")}</div></section>${trustSection()}`;
+  app.innerHTML = `${pageHero("Curated by purpose", "Categories", "Explore pieces for prayer rooms, peaceful interiors and meaningful gifting.")}<section class="section"><div class="container categories-large">${CATEGORIES.map(([name, count, id]) => `<article class="category-large">${image(productById(id))}<div><span>${String(count).padStart(2, "0")} curated ${count === 1 ? "piece" : "pieces"}</span><h2>${name}</h2><button class="btn white" data-category="${name}">View Products →</button></div></article>`).join("")}</div></section>${trustSection()}`;
 }
 
 function renderShop() {
@@ -236,7 +252,7 @@ function renderProduct(id) {
   const saved = state.wishlist.includes(product.id);
   const related = state.catalog.filter(item => item.id !== product.id).slice(0, 3);
   app.innerHTML = `<div class="container breadcrumb"><button data-nav="home">Home</button><span>›</span><button data-nav="shop">Shop</button><span>›</span><b>${product.name}</b></div><section class="container product-layout">
-    <div class="gallery"><div class="main-image">${image(product)}<button class="gallery-back" data-nav="shop">‹</button><button class="gallery-heart ${saved ? "saved" : ""}" data-wishlist="${product.id}">${saved ? "♥" : "♡"}</button><button class="zoom-toggle" id="zoom-toggle">⌕ Zoom</button></div><div class="thumbs">${["Front view", "Craft detail", "Room view"].map((label, index) => `<button class="${index === 0 ? "active" : ""}" data-thumb="${index}">${image(product)}<span>${label}</span></button>`).join("")}</div></div>
+    <div class="gallery"><div class="main-image">${image(product)}<button class="gallery-back" data-nav="shop">‹</button><button class="gallery-heart ${saved ? "saved" : ""}" data-wishlist="${product.id}">${saved ? "♥" : "♡"}</button><button class="zoom-toggle" id="zoom-toggle">⌕ Zoom</button></div><div class="photo-source-note"><span>✓</span><p><strong>Original product photograph</strong><small>Shown in full without artificial replacement imagery</small></p></div></div>
     <div class="product-info"><div class="info-top"><span class="eyebrow">${product.category}</span><button aria-label="Share product">↗</button></div><h1>${product.name}</h1><div class="detail-rating"><span>★★★★★</span>${stars(product)}<small>✓ Verified quality</small></div><strong class="detail-price">${money(product.price)}</strong><p class="description">${product.description}</p><div class="quality-cards"><div><b>${product.stock}</b><small>In Stock</small></div><div><b>Premium</b><small>Quality</small></div><div><b>Secure</b><small>Packaging</small></div></div><h3>Why you’ll love it</h3><ul class="feature-list">${product.features.slice(0, 5).map(feature => `<li>✓ ${feature}</li>`).join("")}</ul><div class="purchase"><div><span>Quantity</span><div class="quantity"><button data-detail-minus>−</button><b id="detail-quantity">1</b><button data-detail-plus>＋</button></div></div><div class="button-row"><button class="btn outline flex" data-detail-add="${product.id}">▱ Add to Cart</button><button class="btn primary flex" data-buy="${product.id}">Buy Now →</button></div></div><div class="delivery-note">♧ <span><strong>Complimentary Malaysia delivery</strong><small>Estimated arrival in 3–5 business days</small></span></div></div>
   </section><section class="section detail-section"><div class="container"><div class="tabs">${["description", "features", "specifications", "reviews", "shipping", "returns"].map(tab => `<button class="${state.activeTab === tab ? "active" : ""}" data-tab="${tab}">${tab[0].toUpperCase() + tab.slice(1)}</button>`).join("")}</div><div class="tab-panel" id="tab-panel">${tabContent(product)}</div></div></section><section class="section related"><div class="container">${sectionHeading("Continue exploring", "Related pieces")}<div class="product-grid related-grid">${related.map(item => card(item, false)).join("")}</div></div></section>`;
 }
@@ -611,8 +627,6 @@ document.addEventListener("click", event => {
   const buy = event.target.closest("[data-buy]");
   if (buy) { addToCart(buy.dataset.buy, Number(document.querySelector("#detail-quantity").textContent)); state.checkoutStep = 0; go("checkout"); }
   if (event.target.closest("#zoom-toggle")) document.querySelector(".main-image .product-image")?.classList.toggle("zoomed");
-  const thumb = event.target.closest("[data-thumb]");
-  if (thumb) { document.querySelectorAll("[data-thumb]").forEach(item => item.classList.remove("active")); thumb.classList.add("active"); document.querySelector(".main-image .product-image img").style.filter = thumb.dataset.thumb === "1" ? "contrast(1.1) saturate(.8)" : thumb.dataset.thumb === "2" ? "brightness(.9) saturate(1.1)" : "none"; }
   const tab = event.target.closest("[data-tab]");
   if (tab) { state.activeTab = tab.dataset.tab; renderProduct(routeFromLocation()[1]); }
 

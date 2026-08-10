@@ -19,13 +19,15 @@ test("uses a framework-free HTML, CSS and JavaScript storefront", async () => {
   assert.match(css, /--green:\s*#72b900/);
   assert.match(js, /3 FIT LION DIVINE/);
   assert.match(js, /MYR/);
+  assert.match(js, /assets\/Screenshot 2026-08-10 221541\.png/);
+  assert.doesNotMatch(js, /divine-products-reference|crop:/);
   assert.match(js, /\/api\/checkout\/session/);
   assert.match(js, /serviceWorker\.register/);
   assert.doesNotMatch(packageJson, /react|next|vinext|tailwind/i);
 });
 
 test("build output contains the static site and Cloudflare worker", async () => {
-  for (const path of ["dist/client/index.html", "dist/client/styles.css", "dist/client/app.js", "dist/client/manifest.webmanifest", "dist/client/sw.js", "dist/client/og.png", "dist/client/divine-products-reference.png", "dist/server/index.js", "dist/server/wrangler.json", "dist/.openai/hosting.json"]) {
+  for (const path of ["dist/client/index.html", "dist/client/styles.css", "dist/client/app.js", "dist/client/manifest.webmanifest", "dist/client/sw.js", "dist/client/assets/Screenshot 2026-08-10 221541.png", "dist/client/assets/Screenshot 2026-08-10 221614.png", "dist/client/assets/Screenshot 2026-08-10 221645.png", "dist/client/assets/Screenshot 2026-08-10 221721.png", "dist/client/assets/Screenshot 2026-08-10 221746.png", "dist/client/assets/Screenshot 2026-08-10 221814.png", "dist/server/index.js", "dist/server/wrangler.json", "dist/.openai/hosting.json"]) {
     await access(new URL(path, root));
   }
 
