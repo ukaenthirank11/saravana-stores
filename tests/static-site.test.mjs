@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { access, readFile } from "node:fs/promises";
+import { access, readFile, readdir } from "node:fs/promises";
 import test from "node:test";
 
 const root = new URL("../", import.meta.url);
@@ -42,4 +42,22 @@ test("build output contains the static site, product photography and Cloudflare 
   const response = await worker.default.fetch(new Request("https://example.test/api/health"), { ASSETS: { fetch: () => new Response("Not found", { status: 404 }) } });
   assert.equal(response.status, 503);
   assert.equal((await response.json()).stack, "HTML, CSS, JavaScript + FastAPI");
+});
+
+test("maps every supplied source photograph to a storefront product", async () => {
+  const mapping = JSON.parse(await readFile(new URL("assets/Products/product-image-map.json", root), "utf8"));
+  const sourceFiles = (await readdir(new URL("assets/Products/", root))).filter(file => /\.(png|jpe?g|webp)$/i.test(file)).sort();
+  const mappedSources = mapping.map(item => item.source).sort();
+  const js = await readFile(new URL("app.js", root), "utf8");
+
+  assert.equal(mapping.length, 8);
+  assert.deepEqual(mappedSources, sourceFiles);
+  assert.equal(new Set(mapping.map(item => item.product_id)).size, mapping.length);
+
+  for (const item of mapping) {
+    await access(new URL(`assets/Products/${item.source}`, root));
+    await access(new URL(`public${item.public_asset}`, root));
+    assert.match(js, new RegExp(item.product_id));
+    assert.match(js, new RegExp(item.public_asset.replaceAll("/", "\\/")));
+  }
 });
