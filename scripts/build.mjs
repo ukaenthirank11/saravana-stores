@@ -15,6 +15,11 @@ for (const file of ["index.html", "styles.css", "app.js"]) {
 }
 
 await cp(resolve(root, "public"), client, { recursive: true });
+const productImageMap = JSON.parse(await readFile(resolve(root, "assets", "Products", "product-image-map.json"), "utf8"));
+await mkdir(resolve(client, "products"), { recursive: true });
+for (const item of productImageMap) {
+  await cp(resolve(root, "assets", "Products", item.source), resolve(client, "products", `${item.product_id}.png`));
+}
 await cp(resolve(root, "worker", "index.js"), resolve(server, "index.js"));
 await cp(resolve(root, "worker", "wrangler.json"), resolve(server, "wrangler.json"));
 

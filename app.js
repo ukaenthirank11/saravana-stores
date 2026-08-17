@@ -114,49 +114,49 @@ PRODUCTS.push(...EXTENDED_PRODUCT_DATA.map(([id, name, stock, price, category, r
 
 const PHOTO_PRODUCT_DATA = [
   {
-    id: "brass-lotus-multi-diya-urli-stand", name: "Brass Lotus Multi Diya Urli Stand", stock: 24, price: 8999, currency: "INR", category: "Accessories", rating: 4.9, reviews: 128, sku: "DC-IN-5001", imageOrientation: "portrait", image: "/products/brass-lotus-multi-diya-urli-stand.webp",
+    id: "brass-lotus-multi-diya-urli-stand", name: "Brass Lotus Multi Diya Urli Stand", stock: 24, price: 8999, currency: "INR", category: "Accessories", rating: 4.9, reviews: 128, sku: "DC-IN-5001", imageOrientation: "portrait", image: "/products/brass-lotus-multi-diya-urli-stand.png",
     description: "Elegant handcrafted brass urli with lotus candle holder and multiple diyas, perfect for festive décor and pooja rooms.",
     details: { material: "Premium Brass", finish: "Polished Gold", idealFor: "Festivals, Temple, Home Décor" },
     features: ["Lotus top", "10 Diya Holders", "Large Urli Bowl", "Handmade"]
   },
   {
-    id: "brass-lotus-deepam-set-of-3", name: "Brass Lotus Deepam (Set of 3)", stock: 60, price: 2499, currency: "INR", category: "Lighting", rating: 4.8, reviews: 114, sku: "DC-IN-5002", imageOrientation: "portrait", image: "/products/brass-lotus-deepam-set-of-3.webp",
+    id: "brass-lotus-deepam-set-of-3", name: "Brass Lotus Deepam (Set of 3)", stock: 60, price: 2499, currency: "INR", category: "Lighting", rating: 4.8, reviews: 114, sku: "DC-IN-5002", imageOrientation: "portrait", image: "/products/brass-lotus-deepam-set-of-3.png",
     description: "Traditional lotus-shaped brass deepams that bring divine elegance to every prayer and celebration.",
     details: { material: "Solid Brass", finish: "Antique Polish", idealFor: "Daily Pooja & Festivals" },
     features: ["Set of 3", "Stable Base", "Handmade", "Long-lasting"]
   },
   {
-    id: "silver-kumkum-haldi-bowls-set-of-2", name: "Silver Finish Kumkum & Haldi Bowls (Set of 2)", stock: 45, price: 1299, currency: "INR", category: "Accessories", rating: 4.8, reviews: 109, sku: "DC-IN-5003", imageOrientation: "portrait", image: "/products/silver-kumkum-haldi-bowls-set-of-2.webp",
+    id: "silver-kumkum-haldi-bowls-set-of-2", name: "Silver Finish Kumkum & Haldi Bowls (Set of 2)", stock: 45, price: 1299, currency: "INR", category: "Accessories", rating: 4.8, reviews: 109, sku: "DC-IN-5003", imageOrientation: "portrait", image: "/products/silver-kumkum-haldi-bowls-set-of-2.png",
     description: "Decorative lotus bowls designed for storing kumkum, turmeric, flowers, or other sacred offerings.",
     details: { material: "Metal with Silver Finish", finish: "Glossy Silver", idealFor: "Pooja Essentials" },
     features: ["Set of 2", "Lotus Design", "Decorative", "Easy to Clean"]
   },
   {
-    id: "brass-lotus-urli-bowl", name: "Brass Lotus Urli Bowl", stock: 32, price: 3299, currency: "INR", category: "Accessories", rating: 4.9, reviews: 97, sku: "DC-IN-5004", imageOrientation: "portrait", image: "/products/brass-lotus-urli-bowl.webp",
+    id: "brass-lotus-urli-bowl", name: "Brass Lotus Urli Bowl", stock: 32, price: 3299, currency: "INR", category: "Accessories", rating: 4.9, reviews: 97, sku: "DC-IN-5004", imageOrientation: "portrait", image: "/products/brass-lotus-urli-bowl.png",
     description: "Beautiful lotus-inspired brass urli ideal for floating flowers, candles, and festive decorations.",
     details: { material: "Premium Brass", finish: "Antique Gold", idealFor: "Home Entrance, Living Room, Temple" },
     features: ["Floral Design", "Heavy Duty", "Handmade"]
   },
   {
-    id: "wooden-dhoop-burner-box", name: "Wooden Dhoop Burner Box", stock: 37, price: 2199, currency: "INR", category: "Accessories", rating: 4.7, reviews: 93, sku: "DC-IN-5005", imageOrientation: "portrait", image: "/products/wooden-dhoop-burner-box.webp",
+    id: "wooden-dhoop-burner-box", name: "Wooden Dhoop Burner Box", stock: 37, price: 2199, currency: "INR", category: "Accessories", rating: 4.7, reviews: 93, sku: "DC-IN-5005", imageOrientation: "portrait", image: "/products/wooden-dhoop-burner-box.png",
     description: "Premium handcrafted wooden incense burner with brass lining for a clean and aromatic pooja experience.",
     details: { material: "Wood & Brass", finish: "Natural Wood", idealFor: "Dhoop & Sambrani" },
     features: ["Ventilated Lid", "Heat Resistant", "Elegant Design"]
   },
   {
-    id: "wooden-temple-diya-stand", name: "Wooden Temple Diya Stand", stock: 18, price: 5499, currency: "INR", category: "Temples", rating: 4.9, reviews: 89, sku: "DC-IN-5006", imageOrientation: "portrait", image: "/products/wooden-temple-diya-stand.webp",
+    id: "wooden-temple-diya-stand", name: "Wooden Temple Diya Stand", stock: 18, price: 5499, currency: "INR", category: "Temples", rating: 4.9, reviews: 89, sku: "DC-IN-5006", imageOrientation: "portrait", image: "/products/wooden-temple-diya-stand.png",
     description: "Traditional wooden pooja stand with multiple brass diya holders for devotional lighting during rituals.",
     details: { material: "Wood & Brass", finish: "Dark Walnut", idealFor: "Home Temple" },
     features: ["Multiple Diya Holders", "Decorative Brass Accents", "Handmade"]
   },
   {
-    id: "decorative-brass-aarti-spoon", name: "Decorative Brass Aarti Spoon", stock: 75, price: 899, currency: "INR", category: "Accessories", rating: 4.8, reviews: 82, sku: "DC-IN-5007", imageOrientation: "portrait", image: "/products/decorative-brass-aarti-spoon.webp",
+    id: "decorative-brass-aarti-spoon", name: "Decorative Brass Aarti Spoon", stock: 75, price: 899, currency: "INR", category: "Accessories", rating: 4.8, reviews: 82, sku: "DC-IN-5007", imageOrientation: "portrait", image: "/products/decorative-brass-aarti-spoon.png",
     description: "Ornately crafted brass aarti spoon for offering ghee during pooja and religious ceremonies.",
     details: { material: "Solid Brass", finish: "Antique Polish", idealFor: "Aarti & Havan" },
     features: ["Traditional Design", "Comfortable Grip", "Durable"]
   },
   {
-    id: "antique-brass-temple-bell", name: "Antique Brass Temple Bell", stock: 48, price: 1599, currency: "INR", category: "Accessories", rating: 4.9, reviews: 105, sku: "DC-IN-5008", imageOrientation: "portrait", image: "/products/antique-brass-temple-bell.webp",
+    id: "antique-brass-temple-bell", name: "Antique Brass Temple Bell", stock: 48, price: 1599, currency: "INR", category: "Accessories", rating: 4.9, reviews: 105, sku: "DC-IN-5008", imageOrientation: "portrait", image: "/products/antique-brass-temple-bell.png",
     description: "Finely engraved brass temple bell that produces a clear, soothing sound for daily worship.",
     details: { material: "Premium Brass", finish: "Antique Gold", idealFor: "Home Temple & Rituals" },
     features: ["Loud Resonance", "Intricate Engraving", "Handmade"]

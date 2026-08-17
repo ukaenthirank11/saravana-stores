@@ -34,7 +34,7 @@ test("uses a framework-free HTML, CSS and JavaScript storefront", async () => {
 });
 
 test("build output contains the static site, product photography and Cloudflare worker", async () => {
-  for (const path of ["dist/client/index.html", "dist/client/styles.css", "dist/client/app.js", "dist/client/manifest.webmanifest", "dist/client/sw.js", "dist/client/products/brass-lotus-multi-diya-urli-stand.webp", "dist/client/products/antique-brass-temple-bell.webp", "dist/server/index.js", "dist/server/wrangler.json", "dist/.openai/hosting.json"]) {
+  for (const path of ["dist/client/index.html", "dist/client/styles.css", "dist/client/app.js", "dist/client/manifest.webmanifest", "dist/client/sw.js", "dist/client/products/brass-lotus-multi-diya-urli-stand.png", "dist/client/products/antique-brass-temple-bell.png", "dist/server/index.js", "dist/server/wrangler.json", "dist/.openai/hosting.json"]) {
     await access(new URL(path, root));
   }
 
@@ -44,11 +44,11 @@ test("build output contains the static site, product photography and Cloudflare 
   assert.equal((await response.json()).stack, "HTML, CSS, JavaScript + FastAPI");
 
   const imageResponse = await worker.default.fetch(
-    new Request("https://example.test/products/brass-lotus-multi-diya-urli-stand.webp"),
+    new Request("https://example.test/products/brass-lotus-multi-diya-urli-stand.png"),
     { ASSETS: { fetch: () => new Response(new Uint8Array([1, 2, 3]), { headers: { "Content-Type": "application/octet-stream" } }) } }
   );
   assert.equal(imageResponse.status, 200);
-  assert.equal(imageResponse.headers.get("Content-Type"), "image/webp");
+  assert.equal(imageResponse.headers.get("Content-Type"), "image/png");
   assert.match(imageResponse.headers.get("Cache-Control"), /immutable/);
 });
 
@@ -64,7 +64,7 @@ test("maps every supplied source photograph to a storefront product", async () =
 
   for (const item of mapping) {
     await access(new URL(`assets/Products/${item.source}`, root));
-    await access(new URL(`public${item.public_asset}`, root));
+    await access(new URL(`dist/client${item.public_asset}`, root));
     assert.match(js, new RegExp(item.product_id));
     assert.match(js, new RegExp(item.public_asset.replaceAll("/", "\\/")));
   }
@@ -77,7 +77,7 @@ test("publishes product photos with image headers and a fresh offline cache", as
   ]);
 
   assert.match(headers, /\/products\/\*/);
-  assert.match(headers, /Content-Type: image\/webp/);
-  assert.match(serviceWorker, /divine-collection-v7/);
+  assert.match(headers, /Content-Type: image\/png/);
+  assert.match(serviceWorker, /divine-collection-v8/);
   assert.match(serviceWorker, /url\.pathname\.startsWith\("\/products\/"\)/);
 });

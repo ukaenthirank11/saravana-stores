@@ -21,9 +21,9 @@ export default {
 
     const asset = await env.ASSETS.fetch(request);
     if (asset.status !== 404 || !["GET", "HEAD"].includes(request.method)) {
-      if (asset.ok && url.pathname.startsWith("/products/") && url.pathname.endsWith(".webp")) {
+      if (asset.ok && url.pathname.startsWith("/products/") && url.pathname.endsWith(".png")) {
         const headers = new Headers(asset.headers);
-        headers.set("Content-Type", "image/webp");
+        headers.set("Content-Type", "image/png");
         headers.set("Cache-Control", "public, max-age=31536000, immutable");
         return new Response(asset.body, { status: asset.status, statusText: asset.statusText, headers });
       }

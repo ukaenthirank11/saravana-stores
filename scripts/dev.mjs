@@ -1,5 +1,5 @@
 import { createReadStream } from "node:fs";
-import { access, stat } from "node:fs/promises";
+import { access, readFile, stat } from "node:fs/promises";
 import { createServer } from "node:http";
 import { extname, join, normalize, resolve } from "node:path";
 
@@ -7,6 +7,7 @@ const root = resolve(import.meta.dirname, "..");
 const port = Number(process.env.PORT || 3000);
 const apiOrigin = process.env.FASTAPI_ORIGIN || "http://127.0.0.1:8000";
 const mime = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".json": "application/json; charset=utf-8", ".webmanifest": "application/manifest+json; charset=utf-8", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".svg": "image/svg+xml" };
+const productImages = new Map(JSON.parse(await readFile(resolve(root, "assets", "Products", "product-image-map.json"), "utf8")).map(item => [item.product_id, item.source]));
 
 async function proxyApi(request, response, url) {
   try {
@@ -37,6 +38,10 @@ async function proxyApi(request, response, url) {
 
 async function findFile(pathname) {
   const cleaned = normalize(decodeURIComponent(pathname)).replace(/^(\.\.[/\\])+/, "");
+  if (cleaned.startsWith("products/") && cleaned.endsWith(".png")) {
+    const source = productImages.get(cleaned.slice("products/".length, -".png".length));
+    if (source) return resolve(root, "assets", "Products", source);
+  }
   const candidates = [join(root, cleaned), join(root, "public", cleaned)];
   for (const file of candidates) {
     if (!file.startsWith(root)) continue;
