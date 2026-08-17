@@ -56,9 +56,21 @@ PRODUCTS = {
     "usb-om-arch-light": {"name": "USB OM ARCH LIGHT", "price_sen": 52_000, "stock": 125},
     "warm-temple-strip-light": {"name": "WARM TEMPLE STRIP LIGHT", "price_sen": 36_000, "stock": 140},
     "ganesha-stone-lamp": {"name": "GANESHA STONE LAMP", "price_sen": 125_000, "stock": 58},
+    "brass-lotus-multi-diya-urli-stand": {"name": "Brass Lotus Multi Diya Urli Stand", "price_sen": 899_900, "stock": 24, "currency": "inr"},
+    "brass-lotus-deepam-set-of-3": {"name": "Brass Lotus Deepam (Set of 3)", "price_sen": 249_900, "stock": 60, "currency": "inr"},
+    "silver-kumkum-haldi-bowls-set-of-2": {"name": "Silver Finish Kumkum & Haldi Bowls (Set of 2)", "price_sen": 129_900, "stock": 45, "currency": "inr"},
+    "brass-lotus-urli-bowl": {"name": "Brass Lotus Urli Bowl", "price_sen": 329_900, "stock": 32, "currency": "inr"},
+    "wooden-dhoop-burner-box": {"name": "Wooden Dhoop Burner Box", "price_sen": 219_900, "stock": 37, "currency": "inr"},
+    "wooden-temple-diya-stand": {"name": "Wooden Temple Diya Stand", "price_sen": 549_900, "stock": 18, "currency": "inr"},
+    "decorative-brass-aarti-spoon": {"name": "Decorative Brass Aarti Spoon", "price_sen": 89_900, "stock": 75, "currency": "inr"},
+    "antique-brass-temple-bell": {"name": "Antique Brass Temple Bell", "price_sen": 159_900, "stock": 48, "currency": "inr"},
 }
 
-DELIVERY_FEES = {"economy": 0, "standard": 1_200, "express": 3_500}
+DELIVERY_FEES = {
+    "myr": {"economy": 0, "standard": 1_200, "express": 3_500},
+    "inr": {"economy": 0, "standard": 9_900, "express": 24_900},
+}
+PROMO_CAPS = {"myr": 10_000, "inr": 50_000}
 CHECKOUT_ATTEMPTS: dict[str, list[float]] = {}
 
 
@@ -89,7 +101,9 @@ class CheckoutResponse(BaseModel):
     mode: Literal["stripe", "demo"]
     checkout_url: str
     order_id: str
-    total_myr: str
+    currency: str
+    total: str
+    total_myr: str | None = None
     message: str
 
 
@@ -136,8 +150,9 @@ def now_iso() -> str:
     return datetime.now(UTC).isoformat()
 
 
-def calculate_order(payload: CheckoutRequest) -> tuple[list[dict], int, int, int, int]:
+def calculate_order(payload: CheckoutRequest) -> tuple[list[dict], str, int, int, int, int]:
     validated_items: list[dict] = []
+    currencies: set[str] = set()
     subtotal = 0
     for line in payload.items:
         product = PRODUCTS.get(line.product_id)
@@ -145,27 +160,33 @@ def calculate_order(payload: CheckoutRequest) -> tuple[list[dict], int, int, int
             raise HTTPException(status_code=400, detail=f"Unknown product: {line.product_id}")
         if line.quantity > product["stock"]:
             raise HTTPException(status_code=409, detail=f"Only {product['stock']} units are available for {product['name']}")
+        currency = product.get("currency", "myr")
+        currencies.add(currency)
         line_total = product["price_sen"] * line.quantity
         subtotal += line_total
         validated_items.append(
             {
                 "product_id": line.product_id,
                 "name": product["name"],
+                "currency": currency.upper(),
                 "unit_amount_sen": product["price_sen"],
                 "quantity": line.quantity,
                 "line_total_sen": line_total,
             }
         )
+    if len(currencies) != 1:
+        raise HTTPException(status_code=400, detail="Checkout supports one currency at a time. Please separate MYR and INR products.")
+    currency = currencies.pop()
     if subtotal > 10_000_000:
         raise HTTPException(status_code=400, detail="Order total exceeds the online checkout limit")
-    delivery = DELIVERY_FEES[payload.delivery]
+    delivery = DELIVERY_FEES[currency][payload.delivery]
     promo = (payload.promo_code or "").strip().upper()
-    discount = min(10_000, round(subtotal * 0.08)) if promo == "DIVINE8" else 0
+    discount = min(PROMO_CAPS[currency], round(subtotal * 0.08)) if promo == "DIVINE8" else 0
     total = subtotal + delivery - discount
-    return validated_items, subtotal, delivery, discount, total
+    return validated_items, currency, subtotal, delivery, discount, total
 
 
-def create_order(payload: CheckoutRequest, items: list[dict], subtotal: int, delivery: int, discount: int, total: int) -> str:
+def create_order(payload: CheckoutRequest, items: list[dict], currency: str, subtotal: int, delivery: int, discount: int, total: int) -> str:
     order_id = f"DC-{datetime.now(UTC):%Y%m%d}-{secrets.token_hex(3).upper()}"
     timestamp = now_iso()
     with connect_db() as connection:
@@ -179,7 +200,7 @@ def create_order(payload: CheckoutRequest, items: list[dict], subtotal: int, del
             (
                 order_id,
                 "pending",
-                "myr",
+                currency,
                 subtotal,
                 delivery,
                 discount,
@@ -202,19 +223,27 @@ def update_order(order_id: str, status: str, stripe_session_id: str | None = Non
 
 
 def serialize_order(row: sqlite3.Row) -> dict:
-    return {
+    serialized = {
         "id": row["id"],
         "status": row["status"],
         "currency": row["currency"].upper(),
-        "subtotal_myr": f"{row['subtotal_sen'] / 100:.2f}",
-        "delivery_myr": f"{row['delivery_sen'] / 100:.2f}",
-        "discount_myr": f"{row['discount_sen'] / 100:.2f}",
-        "total_myr": f"{row['total_sen'] / 100:.2f}",
+        "subtotal": f"{row['subtotal_sen'] / 100:.2f}",
+        "delivery": f"{row['delivery_sen'] / 100:.2f}",
+        "discount": f"{row['discount_sen'] / 100:.2f}",
+        "total": f"{row['total_sen'] / 100:.2f}",
         "items": json.loads(row["items_json"]),
         "customer": json.loads(row["customer_json"]),
         "created_at": row["created_at"],
         "updated_at": row["updated_at"],
     }
+    if row["currency"] == "myr":
+        serialized.update(
+            subtotal_myr=serialized["subtotal"],
+            delivery_myr=serialized["delivery"],
+            discount_myr=serialized["discount"],
+            total_myr=serialized["total"],
+        )
+    return serialized
 
 
 def enforce_checkout_rate_limit(request: Request) -> None:
@@ -276,9 +305,15 @@ def health() -> dict:
 @app.get("/api/products")
 def products() -> dict:
     return {
-        "currency": "MYR",
+        "currency": "MIXED",
         "products": [
-            {"id": product_id, "name": product["name"], "price_myr": f"{product['price_sen'] / 100:.2f}", "stock": product["stock"]}
+            {
+                "id": product_id,
+                "name": product["name"],
+                "price": f"{product['price_sen'] / 100:.2f}",
+                "currency": product.get("currency", "myr").upper(),
+                "stock": product["stock"],
+            }
             for product_id, product in PRODUCTS.items()
         ],
     }
@@ -287,8 +322,8 @@ def products() -> dict:
 @app.post("/api/checkout/session", response_model=CheckoutResponse)
 def checkout_session(payload: CheckoutRequest, request: Request) -> CheckoutResponse:
     enforce_checkout_rate_limit(request)
-    items, subtotal, delivery, discount, total = calculate_order(payload)
-    order_id = create_order(payload, items, subtotal, delivery, discount, total)
+    items, currency, subtotal, delivery, discount, total = calculate_order(payload)
+    order_id = create_order(payload, items, currency, subtotal, delivery, discount, total)
     return_base = frontend_url(request)
     payment_mode = os.getenv("PAYMENT_MODE", "demo").lower()
 
@@ -306,7 +341,7 @@ def checkout_session(payload: CheckoutRequest, request: Request) -> CheckoutResp
                 line_items=[
                     {
                         "price_data": {
-                            "currency": "myr",
+                            "currency": currency,
                             "product_data": {
                                 "name": f"Divine Collection order {order_id}",
                                 "description": f"{sum(item['quantity'] for item in items)} curated piece(s), including delivery",
@@ -331,7 +366,9 @@ def checkout_session(payload: CheckoutRequest, request: Request) -> CheckoutResp
             mode="stripe",
             checkout_url=session.url,
             order_id=order_id,
-            total_myr=f"{total / 100:.2f}",
+            currency=currency.upper(),
+            total=f"{total / 100:.2f}",
+            total_myr=f"{total / 100:.2f}" if currency == "myr" else None,
             message="Continue to Stripe to complete secure payment.",
         )
 
@@ -340,7 +377,9 @@ def checkout_session(payload: CheckoutRequest, request: Request) -> CheckoutResp
         mode="demo",
         checkout_url=f"{return_base}/order-success?order_id={order_id}&demo=1",
         order_id=order_id,
-        total_myr=f"{total / 100:.2f}",
+        currency=currency.upper(),
+        total=f"{total / 100:.2f}",
+        total_myr=f"{total / 100:.2f}" if currency == "myr" else None,
         message="Preview payment approved. No real charge was made.",
     )
 

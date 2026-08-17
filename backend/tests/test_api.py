@@ -38,12 +38,16 @@ class CommerceApiTests(unittest.TestCase):
 
         products = self.client.get("/api/products")
         self.assertEqual(products.status_code, 200)
-        self.assertEqual(products.json()["currency"], "MYR")
+        self.assertEqual(products.json()["currency"], "MIXED")
         catalogue = products.json()["products"]
-        self.assertEqual(len(catalogue), 25)
+        self.assertEqual(len(catalogue), 33)
         ganesha_lamp = next(product for product in catalogue if product["id"] == "ganesha-stone-lamp")
-        self.assertEqual(ganesha_lamp["price_myr"], "1250.00")
+        self.assertEqual(ganesha_lamp["price"], "1250.00")
+        self.assertEqual(ganesha_lamp["currency"], "MYR")
         self.assertEqual(ganesha_lamp["stock"], 58)
+        brass_urli = next(product for product in catalogue if product["id"] == "brass-lotus-multi-diya-urli-stand")
+        self.assertEqual(brass_urli["price"], "8999.00")
+        self.assertEqual(brass_urli["currency"], "INR")
 
     def test_demo_checkout_uses_server_prices_and_persists_order(self) -> None:
         response = self.client.post(
@@ -78,6 +82,54 @@ class CommerceApiTests(unittest.TestCase):
         self.assertEqual(order.status_code, 200)
         self.assertEqual(order.json()["status"], "paid_demo")
         self.assertEqual(order.json()["total_myr"], "3202.00")
+
+    def test_inr_product_checkout_uses_rupee_pricing(self) -> None:
+        response = self.client.post(
+            "/api/checkout/session",
+            json={
+                "items": [{"product_id": "brass-lotus-multi-diya-urli-stand", "quantity": 1}],
+                "delivery": "standard",
+                "customer": {
+                    "full_name": "Aishah Rahman",
+                    "email": "aishah@example.my",
+                    "phone": "+60 12-345 6789",
+                    "address": "18 Jalan Damai Perdana 3",
+                    "city": "Kuala Lumpur",
+                    "state": "Kuala Lumpur",
+                    "postal_code": "56000",
+                    "country": "Malaysia",
+                },
+            },
+        )
+        self.assertEqual(response.status_code, 200, response.text)
+        checkout = response.json()
+        self.assertEqual(checkout["currency"], "INR")
+        self.assertEqual(checkout["total"], "9098.00")
+        self.assertIsNone(checkout["total_myr"])
+
+    def test_mixed_currency_cart_is_rejected(self) -> None:
+        response = self.client.post(
+            "/api/checkout/session",
+            json={
+                "items": [
+                    {"product_id": "3-fit-lion-divine", "quantity": 1},
+                    {"product_id": "antique-brass-temple-bell", "quantity": 1},
+                ],
+                "delivery": "economy",
+                "customer": {
+                    "full_name": "Aishah Rahman",
+                    "email": "aishah@example.my",
+                    "phone": "+60 12-345 6789",
+                    "address": "18 Jalan Damai Perdana 3",
+                    "city": "Kuala Lumpur",
+                    "state": "Kuala Lumpur",
+                    "postal_code": "56000",
+                    "country": "Malaysia",
+                },
+            },
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("one currency", response.json()["detail"])
 
     def test_unknown_products_are_rejected(self) -> None:
         response = self.client.post(

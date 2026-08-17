@@ -112,12 +112,65 @@ PRODUCTS.push(...EXTENDED_PRODUCT_DATA.map(([id, name, stock, price, category, r
   id, name, stock, price, category, rating, reviews, sku, imageOrientation, description, features: CATEGORY_FEATURES[category]
 })));
 
+const PHOTO_PRODUCT_DATA = [
+  {
+    id: "brass-lotus-multi-diya-urli-stand", name: "Brass Lotus Multi Diya Urli Stand", stock: 24, price: 8999, currency: "INR", category: "Accessories", rating: 4.9, reviews: 128, sku: "DC-IN-5001", imageOrientation: "portrait", image: "/products/brass-lotus-multi-diya-urli-stand.webp",
+    description: "Elegant handcrafted brass urli with lotus candle holder and multiple diyas, perfect for festive décor and pooja rooms.",
+    details: { material: "Premium Brass", finish: "Polished Gold", idealFor: "Festivals, Temple, Home Décor" },
+    features: ["Lotus top", "10 Diya Holders", "Large Urli Bowl", "Handmade"]
+  },
+  {
+    id: "brass-lotus-deepam-set-of-3", name: "Brass Lotus Deepam (Set of 3)", stock: 60, price: 2499, currency: "INR", category: "Lighting", rating: 4.8, reviews: 114, sku: "DC-IN-5002", imageOrientation: "portrait", image: "/products/brass-lotus-deepam-set-of-3.webp",
+    description: "Traditional lotus-shaped brass deepams that bring divine elegance to every prayer and celebration.",
+    details: { material: "Solid Brass", finish: "Antique Polish", idealFor: "Daily Pooja & Festivals" },
+    features: ["Set of 3", "Stable Base", "Handmade", "Long-lasting"]
+  },
+  {
+    id: "silver-kumkum-haldi-bowls-set-of-2", name: "Silver Finish Kumkum & Haldi Bowls (Set of 2)", stock: 45, price: 1299, currency: "INR", category: "Accessories", rating: 4.8, reviews: 109, sku: "DC-IN-5003", imageOrientation: "portrait", image: "/products/silver-kumkum-haldi-bowls-set-of-2.webp",
+    description: "Decorative lotus bowls designed for storing kumkum, turmeric, flowers, or other sacred offerings.",
+    details: { material: "Metal with Silver Finish", finish: "Glossy Silver", idealFor: "Pooja Essentials" },
+    features: ["Set of 2", "Lotus Design", "Decorative", "Easy to Clean"]
+  },
+  {
+    id: "brass-lotus-urli-bowl", name: "Brass Lotus Urli Bowl", stock: 32, price: 3299, currency: "INR", category: "Accessories", rating: 4.9, reviews: 97, sku: "DC-IN-5004", imageOrientation: "portrait", image: "/products/brass-lotus-urli-bowl.webp",
+    description: "Beautiful lotus-inspired brass urli ideal for floating flowers, candles, and festive decorations.",
+    details: { material: "Premium Brass", finish: "Antique Gold", idealFor: "Home Entrance, Living Room, Temple" },
+    features: ["Floral Design", "Heavy Duty", "Handmade"]
+  },
+  {
+    id: "wooden-dhoop-burner-box", name: "Wooden Dhoop Burner Box", stock: 37, price: 2199, currency: "INR", category: "Accessories", rating: 4.7, reviews: 93, sku: "DC-IN-5005", imageOrientation: "portrait", image: "/products/wooden-dhoop-burner-box.webp",
+    description: "Premium handcrafted wooden incense burner with brass lining for a clean and aromatic pooja experience.",
+    details: { material: "Wood & Brass", finish: "Natural Wood", idealFor: "Dhoop & Sambrani" },
+    features: ["Ventilated Lid", "Heat Resistant", "Elegant Design"]
+  },
+  {
+    id: "wooden-temple-diya-stand", name: "Wooden Temple Diya Stand", stock: 18, price: 5499, currency: "INR", category: "Temples", rating: 4.9, reviews: 89, sku: "DC-IN-5006", imageOrientation: "portrait", image: "/products/wooden-temple-diya-stand.webp",
+    description: "Traditional wooden pooja stand with multiple brass diya holders for devotional lighting during rituals.",
+    details: { material: "Wood & Brass", finish: "Dark Walnut", idealFor: "Home Temple" },
+    features: ["Multiple Diya Holders", "Decorative Brass Accents", "Handmade"]
+  },
+  {
+    id: "decorative-brass-aarti-spoon", name: "Decorative Brass Aarti Spoon", stock: 75, price: 899, currency: "INR", category: "Accessories", rating: 4.8, reviews: 82, sku: "DC-IN-5007", imageOrientation: "portrait", image: "/products/decorative-brass-aarti-spoon.webp",
+    description: "Ornately crafted brass aarti spoon for offering ghee during pooja and religious ceremonies.",
+    details: { material: "Solid Brass", finish: "Antique Polish", idealFor: "Aarti & Havan" },
+    features: ["Traditional Design", "Comfortable Grip", "Durable"]
+  },
+  {
+    id: "antique-brass-temple-bell", name: "Antique Brass Temple Bell", stock: 48, price: 1599, currency: "INR", category: "Accessories", rating: 4.9, reviews: 105, sku: "DC-IN-5008", imageOrientation: "portrait", image: "/products/antique-brass-temple-bell.webp",
+    description: "Finely engraved brass temple bell that produces a clear, soothing sound for daily worship.",
+    details: { material: "Premium Brass", finish: "Antique Gold", idealFor: "Home Temple & Rituals" },
+    features: ["Loud Resonance", "Intricate Engraving", "Handmade"]
+  }
+];
+
+PRODUCTS.push(...PHOTO_PRODUCT_DATA);
+
 const CATEGORIES = [
   ["Divine Home", 7, "lion-divine-home"],
-  ["Temples", 6, "lion-golden-temple"],
-  ["Accessories", 7, "standed-steel-accessories"],
-  ["Lighting", 5, "usb-stone-lighting"],
-  ["Home Décor", 25, "3-fit-lion-divine"]
+  ["Temples", 7, "lion-golden-temple"],
+  ["Accessories", 13, "brass-lotus-multi-diya-urli-stand"],
+  ["Lighting", 6, "brass-lotus-deepam-set-of-3"],
+  ["Home Décor", 33, "brass-lotus-urli-bowl"]
 ];
 
 const PATHS = {
@@ -138,13 +191,13 @@ const API_BASE = String(window.DIVINE_API_BASE || "").replace(/\/$/, "");
 let installPromptEvent = null;
 
 const state = {
-  cart: readStorage("divine-cart", [{ id: "3-fit-lion-divine", quantity: 1 }, { id: "standed-steel-accessories", quantity: 1 }]),
+  cart: readStorage("divine-cart", []),
   wishlist: readStorage("divine-wishlist", ["lion-divine-home", "usb-stone-lighting"]),
   catalog: [...PRODUCTS],
   category: "",
   query: "",
   sort: "popular",
-  maxPrice: 3000,
+  maxPrice: 9000,
   checkoutStep: 0,
   delivery: "standard",
   payment: "stripe",
@@ -176,8 +229,13 @@ function writeStorage() {
   localStorage.setItem("divine-wishlist", JSON.stringify(state.wishlist));
 }
 
-function money(value) {
+function money(value, currency = "MYR") {
+  if (currency === "INR") return `₹${Number(value).toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
   return `MYR ${Number(value).toLocaleString("en-MY", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+function productCurrency(product) {
+  return product?.currency || "MYR";
 }
 
 function productById(id) {
@@ -185,6 +243,9 @@ function productById(id) {
 }
 
 function image(product, className = "") {
+  if (product.image) {
+    return `<img class="product-image product-photo ${product.imageOrientation} ${className}" data-product-image="${product.id}" src="${product.image}" alt="${product.name}" loading="lazy" decoding="async">`;
+  }
   const marks = { "3-fit-lion-divine": "III", "golden-black-3-fit-divine": "GB", "lion-divine-home": "LD", "standed-steel-accessories": "A5", "usb-stone-lighting": "USB", "lion-golden-temple": "LT" };
   const generatedMark = product.name.split(/\s+/).map(word => word[0]).join("").slice(0, 3);
   const palette = product.category.toLowerCase().replaceAll(" ", "-");
@@ -207,7 +268,7 @@ function card(product, quick = true) {
       <div class="card-meta"><span>${product.category}</span>${stars(product)}</div>
       <button class="product-title" data-product="${product.id}">${product.name}</button>
       <span class="stock"><i></i>${product.stock} in stock</span>
-      <div class="card-price"><strong>${money(product.price)}</strong><button data-add="${product.id}" aria-label="Add ${product.name} to cart">＋</button></div>
+      <div class="card-price"><strong>${money(product.price, productCurrency(product))}</strong><button data-add="${product.id}" aria-label="Add ${product.name} to cart">＋</button></div>
     </div>
   </article>`;
 }
@@ -243,7 +304,7 @@ function renderHome() {
       <div class="button-row"><button class="btn primary large" data-nav="shop">SHOP NOW</button><button class="hero-text-link" data-nav="categories">Explore the collection <span>→</span></button></div>
       <div class="hero-proof"><span>4.9</span><p><strong>Trusted by spiritual homes</strong><small>Premium quality • Secure delivery across Malaysia</small></p></div>
     </div>
-    <div class="hero-visual"><div class="hero-halo"></div>${image(hero, "hero-image")}<div class="hero-tag"><span>Featured temple</span><strong>${hero.name}</strong><small>${money(hero.price)}</small></div><button class="hero-arrow" data-product="${hero.id}" aria-label="View featured product">→</button></div>
+    <div class="hero-visual"><div class="hero-halo"></div>${image(hero, "hero-image")}<div class="hero-tag"><span>Featured temple</span><strong>${hero.name}</strong><small>${money(hero.price, productCurrency(hero))}</small></div><button class="hero-arrow" data-product="${hero.id}" aria-label="View featured product">→</button></div>
     <div class="hero-dots" aria-hidden="true"><i class="active"></i><i></i><i></i></div>
   </div></section>
   ${trustSection()}
@@ -260,7 +321,7 @@ function renderShop() {
   let products = state.catalog.filter(product => (!state.category || product.category === state.category || state.category === "Home Décor") && product.price <= state.maxPrice && (!state.query || `${product.name} ${product.category}`.toLowerCase().includes(state.query.toLowerCase())));
   products.sort((a, b) => state.sort === "price-low" ? a.price - b.price : state.sort === "price-high" ? b.price - a.price : state.sort === "rating" ? b.rating - a.rating : b.reviews - a.reviews);
   app.innerHTML = `${pageHero("The complete edit", "Shop Divine Collection", "Premium spiritual accents, crafted for homes with soul.")}<section class="section"><div class="container shop-layout">
-    <aside class="filters"><div class="filter-title"><strong>☷ Filters</strong><button id="reset-filters">Reset</button></div><fieldset><legend>Category</legend>${["Divine Home", "Temples", "Accessories", "Lighting"].map(category => `<label><input type="radio" name="category-filter" value="${category}" ${state.category === category ? "checked" : ""}>${category}</label>`).join("")}</fieldset><fieldset><legend>Price range</legend><div class="range-label"><span>MYR 0</span><span>${money(state.maxPrice)}</span></div><input id="price-range" type="range" min="190" max="3000" step="50" value="${state.maxPrice}"></fieldset><fieldset><legend>Availability</legend><label><input type="checkbox" checked>In stock only</label></fieldset><fieldset><legend>Rating</legend><label><input type="radio" name="rating-filter">★ 4.5 &amp; above</label><label><input type="radio" name="rating-filter">★ 4.0 &amp; above</label></fieldset></aside>
+    <aside class="filters"><div class="filter-title"><strong>☷ Filters</strong><button id="reset-filters">Reset</button></div><fieldset><legend>Category</legend>${["Divine Home", "Temples", "Accessories", "Lighting"].map(category => `<label><input type="radio" name="category-filter" value="${category}" ${state.category === category ? "checked" : ""}>${category}</label>`).join("")}</fieldset><fieldset><legend>Price value</legend><div class="range-label"><span>0</span><span>${Number(state.maxPrice).toLocaleString("en-IN")}</span></div><input id="price-range" type="range" min="100" max="9000" step="100" value="${state.maxPrice}"></fieldset><fieldset><legend>Availability</legend><label><input type="checkbox" checked>In stock only</label></fieldset><fieldset><legend>Rating</legend><label><input type="radio" name="rating-filter">★ 4.5 &amp; above</label><label><input type="radio" name="rating-filter">★ 4.0 &amp; above</label></fieldset></aside>
     <div class="shop-results"><div class="shop-tools"><label class="shop-search">⌕<input id="shop-query" value="${state.query}" placeholder="Search products…"></label><button class="btn filter-button" id="mobile-filter">☷ Filter</button><label class="sort"><small>Sort by</small><select id="sort-select"><option value="popular" ${state.sort === "popular" ? "selected" : ""}>Popular</option><option value="newest">Newest</option><option value="price-low" ${state.sort === "price-low" ? "selected" : ""}>Price Low to High</option><option value="price-high" ${state.sort === "price-high" ? "selected" : ""}>Price High to Low</option><option value="rating" ${state.sort === "rating" ? "selected" : ""}>Rating</option></select></label></div><div class="results-line"><span><strong>${products.length}</strong> pieces found</span>${state.category ? `<button id="clear-category">${state.category} ×</button>` : ""}</div>${products.length ? `<div class="product-grid listing">${products.map(product => card(product)).join("")}</div>` : emptyState("⌕", "No pieces found", "Try adjusting your filters to discover more from the collection.", "Reset filters", "shop")}</div>
   </div></section>`;
 }
@@ -270,15 +331,15 @@ function renderProduct(id) {
   const saved = state.wishlist.includes(product.id);
   const related = state.catalog.filter(item => item.id !== product.id).slice(0, 3);
   app.innerHTML = `<div class="container breadcrumb"><button data-nav="home">Home</button><span>›</span><button data-nav="shop">Shop</button><span>›</span><b>${product.name}</b></div><section class="container product-layout">
-    <div class="gallery"><div class="main-image">${image(product)}<button class="gallery-back" data-nav="shop">‹</button><button class="gallery-heart ${saved ? "saved" : ""}" data-wishlist="${product.id}">${saved ? "♥" : "♡"}</button><button class="zoom-toggle" id="zoom-toggle">⌕ Explore</button></div><div class="photo-source-note"><span>✦</span><p><strong>Photo-free catalogue presentation</strong><small>Architectural artwork keeps the focus on each product’s identity and details</small></p></div></div>
-    <div class="product-info"><div class="info-top"><span class="eyebrow">${product.category}</span><button aria-label="Share product">↗</button></div><h1>${product.name}</h1><div class="detail-rating"><span>★★★★★</span>${stars(product)}<small>✓ Verified quality</small></div><strong class="detail-price">${money(product.price)}</strong><p class="description">${product.description}</p><div class="quality-cards"><div><b>${product.stock}</b><small>In Stock</small></div><div><b>Premium</b><small>Quality</small></div><div><b>Secure</b><small>Packaging</small></div></div><h3>Why you’ll love it</h3><ul class="feature-list">${product.features.slice(0, 5).map(feature => `<li>✓ ${feature}</li>`).join("")}</ul><div class="purchase"><div><span>Quantity</span><div class="quantity"><button data-detail-minus>−</button><b id="detail-quantity">1</b><button data-detail-plus>＋</button></div></div><div class="button-row"><button class="btn outline flex" data-detail-add="${product.id}">▱ Add to Cart</button><button class="btn primary flex" data-buy="${product.id}">Buy Now →</button></div></div><div class="delivery-note">♧ <span><strong>Complimentary Malaysia delivery</strong><small>Estimated arrival in 3–5 business days</small></span></div></div>
+    <div class="gallery"><div class="main-image">${image(product)}<button class="gallery-back" data-nav="shop">‹</button><button class="gallery-heart ${saved ? "saved" : ""}" data-wishlist="${product.id}">${saved ? "♥" : "♡"}</button><button class="zoom-toggle" id="zoom-toggle">⌕ Explore</button></div><div class="photo-source-note"><span>${product.image ? "◇" : "✦"}</span><p><strong>${product.image ? "High-resolution studio photography" : "Photo-free catalogue presentation"}</strong><small>${product.image ? "Original product image shown with true material and finish details" : "Architectural artwork keeps the focus on each product’s identity and details"}</small></p></div></div>
+    <div class="product-info"><div class="info-top"><span class="eyebrow">${product.category}</span><button aria-label="Share product">↗</button></div><h1>${product.name}</h1><div class="detail-rating"><span>★★★★★</span>${stars(product)}<small>✓ Verified quality</small></div><strong class="detail-price">${money(product.price, productCurrency(product))}</strong><p class="description">${product.description}</p><div class="quality-cards"><div><b>${product.stock}</b><small>In Stock</small></div><div><b>Premium</b><small>Quality</small></div><div><b>Secure</b><small>Packaging</small></div></div><h3>Why you’ll love it</h3><ul class="feature-list">${product.features.slice(0, 5).map(feature => `<li>✓ ${feature}</li>`).join("")}</ul><div class="purchase"><div><span>Quantity</span><div class="quantity"><button data-detail-minus>−</button><b id="detail-quantity">1</b><button data-detail-plus>＋</button></div></div><div class="button-row"><button class="btn outline flex" data-detail-add="${product.id}">▱ Add to Cart</button><button class="btn primary flex" data-buy="${product.id}">Buy Now →</button></div></div><div class="delivery-note">♧ <span><strong>Carefully packed delivery</strong><small>Delivery timing and available methods are confirmed at checkout</small></span></div></div>
   </section><section class="section detail-section"><div class="container"><div class="tabs">${["description", "features", "specifications", "reviews", "shipping", "returns"].map(tab => `<button class="${state.activeTab === tab ? "active" : ""}" data-tab="${tab}">${tab[0].toUpperCase() + tab.slice(1)}</button>`).join("")}</div><div class="tab-panel" id="tab-panel">${tabContent(product)}</div></div></section><section class="section related"><div class="container">${sectionHeading("Continue exploring", "Related pieces")}<div class="product-grid related-grid">${related.map(item => card(item, false)).join("")}</div></div></section>`;
 }
 
 function tabContent(product) {
   const tab = state.activeTab;
   if (tab === "features") return `<h2>Product features</h2><div class="feature-detail">${product.features.map(feature => `<div>✓ <span>${feature}</span></div>`).join("")}</div>`;
-  if (tab === "specifications") return `<h2>Specifications</h2><dl><div><dt>Product code</dt><dd>${product.sku}</dd></div><div><dt>Category</dt><dd>${product.category}</dd></div><div><dt>Finish</dt><dd>Premium decorative finish</dd></div><div><dt>Care</dt><dd>Dust gently with a soft, dry cloth</dd></div></dl>`;
+  if (tab === "specifications") return `<h2>Specifications</h2><dl><div><dt>Product code</dt><dd>${product.sku}</dd></div><div><dt>Category</dt><dd>${product.category}</dd></div>${product.details ? `<div><dt>Material</dt><dd>${product.details.material}</dd></div><div><dt>Finish</dt><dd>${product.details.finish}</dd></div><div><dt>Ideal for</dt><dd>${product.details.idealFor}</dd></div>` : `<div><dt>Finish</dt><dd>Premium decorative finish</dd></div>`}<div><dt>Care</dt><dd>Dust gently with a soft, dry cloth</dd></div></dl>`;
   if (tab === "reviews") return `<h2>Customer reviews</h2><div class="review-score"><strong>${product.rating}</strong><span>★★★★★<small>Based on ${product.reviews} verified reviews</small></span></div>`;
   if (tab === "shipping") return `<h2>Shipping information</h2><p>Carefully packed and dispatched throughout Malaysia. Standard delivery is 3–5 business days; express delivery is available at checkout.</p>`;
   if (tab === "returns") return `<h2>Return policy</h2><p>Eligible items may be returned within 7 days in their original condition and packaging. Contact our care team before sending an item back.</p>`;
@@ -299,6 +360,16 @@ function cartItems() {
   return state.cart.map(item => ({ ...item, product: productById(item.id) })).filter(item => item.product);
 }
 
+function cartCurrency() {
+  return productCurrency(cartItems()[0]?.product);
+}
+
+function currencyPricing(currency = "MYR") {
+  return currency === "INR"
+    ? { cartShipping: 99, freeShippingAt: 999, standard: 99, express: 249, promoCap: 500 }
+    : { cartShipping: 25, freeShippingAt: 200, standard: 12, express: 35, promoCap: 100 };
+}
+
 function cartSubtotal() {
   return cartItems().reduce((total, item) => total + item.product.price * item.quantity, 0);
 }
@@ -309,9 +380,11 @@ function quantityControl(id, quantity) {
 
 function renderCart() {
   const items = cartItems();
+  const currency = cartCurrency();
+  const pricing = currencyPricing(currency);
   const subtotal = cartSubtotal();
-  const shipping = subtotal >= 200 ? 0 : 25;
-  app.innerHTML = `${pageHero("Your selection", "Shopping Cart", "Review your pieces before checkout.")}<section class="section"><div class="container cart-layout">${items.length ? `<div class="cart-items"><div class="cart-head"><strong>${items.length} ${items.length === 1 ? "piece" : "pieces"}</strong><button data-nav="shop">Continue shopping →</button></div>${items.map(({ product, quantity }) => `<article class="cart-item">${image(product)}<div><span class="eyebrow">${product.category}</span><h3>${product.name}</h3><small class="stock"><i></i>In stock</small><strong class="mobile-price">${money(product.price)}</strong><div class="cart-controls">${quantityControl(product.id, quantity)}<button data-wishlist="${product.id}">♡ Save</button><button class="danger" data-remove="${product.id}">⌫ Remove</button></div></div><strong class="cart-price">${money(product.price * quantity)}</strong></article>`).join("")}</div><aside class="summary"><span class="eyebrow">Order summary</span><h2>Your total</h2><dl><div><dt>Subtotal</dt><dd>${money(subtotal)}</dd></div><div><dt>Shipping</dt><dd class="green">${shipping ? money(shipping) : "Complimentary"}</dd></div><div><dt>Discount</dt><dd>MYR 0.00</dd></div><div class="total"><dt>Total</dt><dd>${money(subtotal + shipping)}</dd></div></dl><button class="btn primary full" data-nav="checkout">Checkout securely ◇</button><small class="secure">✓ Secure checkout · No card details stored</small><div class="payment-badges"><span>VISA</span><span>Mastercard</span><span>PayPal</span><span>G Pay</span></div></aside>` : emptyState("▱", "Your Cart is Empty", "Discover something meaningful for your space.", "Continue Shopping", "shop")}</div></section>`;
+  const shipping = subtotal >= pricing.freeShippingAt ? 0 : pricing.cartShipping;
+  app.innerHTML = `${pageHero("Your selection", "Shopping Cart", "Review your pieces before checkout.")}<section class="section"><div class="container cart-layout">${items.length ? `<div class="cart-items"><div class="cart-head"><strong>${items.length} ${items.length === 1 ? "piece" : "pieces"}</strong><button data-nav="shop">Continue shopping →</button></div>${items.map(({ product, quantity }) => `<article class="cart-item">${image(product)}<div><span class="eyebrow">${product.category}</span><h3>${product.name}</h3><small class="stock"><i></i>In stock</small><strong class="mobile-price">${money(product.price, productCurrency(product))}</strong><div class="cart-controls">${quantityControl(product.id, quantity)}<button data-wishlist="${product.id}">♡ Save</button><button class="danger" data-remove="${product.id}">⌫ Remove</button></div></div><strong class="cart-price">${money(product.price * quantity, productCurrency(product))}</strong></article>`).join("")}</div><aside class="summary"><span class="eyebrow">Order summary</span><h2>Your total</h2><dl><div><dt>Subtotal</dt><dd>${money(subtotal, currency)}</dd></div><div><dt>Shipping</dt><dd class="green">${shipping ? money(shipping, currency) : "Complimentary"}</dd></div><div><dt>Discount</dt><dd>${money(0, currency)}</dd></div><div class="total"><dt>Total</dt><dd>${money(subtotal + shipping, currency)}</dd></div></dl><button class="btn primary full" data-nav="checkout">Checkout securely ◇</button><small class="secure">✓ Secure checkout · No card details stored</small><div class="payment-badges"><span>VISA</span><span>Mastercard</span><span>Stripe</span><span>G Pay</span></div></aside>` : emptyState("▱", "Your Cart is Empty", "Discover something meaningful for your space.", "Continue Shopping", "shop")}</div></section>`;
 }
 
 function checkoutSteps() {
@@ -320,7 +393,9 @@ function checkoutSteps() {
 }
 
 function checkoutStage() {
-  if (state.checkoutStep === 1) return `<div class="stage-head"><span>02</span><div><h1>Delivery method</h1><p>Choose the timing that suits you.</p></div></div><div class="choice-list">${[["economy", "Economy", "5–7 business days", 0], ["standard", "Standard", "3–5 business days", 12], ["express", "Express", "1–2 business days", 35]].map(([id, label, detail, price]) => `<label class="${state.delivery === id ? "selected" : ""}"><input type="radio" name="delivery" value="${id}" ${state.delivery === id ? "checked" : ""}><span class="choice-icon">♧</span><span><strong>${label}</strong><small>${detail}</small></span><b>${price ? money(price) : "Free"}</b></label>`).join("")}</div><div class="promo-box"><div><span>％</span><p><strong>Have a Promo Code?</strong><small>Apply it before continuing.</small></p></div><form id="promo-form"><input required placeholder="Enter promo code"><button>Apply</button></form>${state.promoApplied ? `<small class="promo-ok">✓ DIVINE8 applied — you saved ${money(Math.min(100, cartSubtotal() * .08))}.</small>` : ""}</div>`;
+  const currency = cartCurrency();
+  const pricing = currencyPricing(currency);
+  if (state.checkoutStep === 1) return `<div class="stage-head"><span>02</span><div><h1>Delivery method</h1><p>Choose the timing that suits you.</p></div></div><div class="choice-list">${[["economy", "Economy", "5–7 business days", 0], ["standard", "Standard", "3–5 business days", pricing.standard], ["express", "Express", "1–2 business days", pricing.express]].map(([id, label, detail, price]) => `<label class="${state.delivery === id ? "selected" : ""}"><input type="radio" name="delivery" value="${id}" ${state.delivery === id ? "checked" : ""}><span class="choice-icon">♧</span><span><strong>${label}</strong><small>${detail}</small></span><b>${price ? money(price, currency) : "Free"}</b></label>`).join("")}</div><div class="promo-box"><div><span>％</span><p><strong>Have a Promo Code?</strong><small>Apply it before continuing.</small></p></div><form id="promo-form"><input required placeholder="Enter promo code"><button>Apply</button></form>${state.promoApplied ? `<small class="promo-ok">✓ DIVINE8 applied — you saved ${money(Math.min(pricing.promoCap, cartSubtotal() * .08), currency)}.</small>` : ""}</div>`;
   if (state.checkoutStep === 2) return `<div class="stage-head"><span>03</span><div><h1>Secure payment</h1><p>Complete payment on Stripe's protected checkout.</p></div></div><div class="choice-list payment-list"><label class="selected stripe-choice"><span class="choice-icon stripe-mark">S</span><span><strong>Stripe secure checkout</strong><small>Cards, FPX and eligible digital wallets are shown securely by Stripe.</small></span><input type="radio" name="payment" value="stripe" checked></label></div><div class="payment-method-row" aria-label="Supported payment types"><span>VISA</span><span>Mastercard</span><span>FPX</span><span>Apple Pay</span><span>G Pay</span></div><div class="payment-runtime ${state.paymentRuntime}"><span></span><p><strong>${state.paymentRuntime === "stripe" ? "Live payment gateway ready" : state.paymentRuntime === "demo" ? "Safe preview mode" : state.paymentRuntime === "offline" ? "Payment service unavailable" : "Checking payment service"}</strong><small>${state.paymentRuntime === "stripe" ? "You will continue to Stripe to authorize payment." : state.paymentRuntime === "demo" ? "Checkout can be tested without making a real charge." : state.paymentRuntime === "offline" ? "Start the FastAPI service to continue checkout." : "Confirming the secure connection…"}</small></p></div><div class="payment-safety">◇ <span><strong>Your payment is protected</strong><small>Prices are recalculated by the server. Divine Collection never receives or stores raw card details.</small></span></div>`;
   if (state.checkoutStep === 3) return `<div class="stage-head"><span>04</span><div><h1>Review &amp; confirm</h1><p>One last look before opening secure payment.</p></div></div><div class="review-list"><div><b>⌖</b><span><strong>Delivery to</strong><small>${state.shippingAddress.full_name} · ${state.shippingAddress.city}, ${state.shippingAddress.country}</small></span><button data-checkout-edit="0">Edit</button></div><div><b>♧</b><span><strong>${state.delivery[0].toUpperCase() + state.delivery.slice(1)} delivery</strong><small>Estimated arrival: 12–14 August</small></span><button data-checkout-edit="1">Edit</button></div><div><b>▤</b><span><strong>Stripe secure checkout</strong><small>Available methods will be shown on the payment page.</small></span><button data-checkout-edit="2">Edit</button></div></div><label class="terms-check"><input id="checkout-terms" type="checkbox" checked> I agree to the Terms &amp; Conditions and Return Policy.</label>`;
   return `<div class="stage-head"><span>01</span><div><h1>Shipping address</h1><p>Where should we send your collection?</p></div></div><div class="address-tabs"><button class="active" type="button">Saved address</button><button id="show-new-address" type="button">＋ Add new address</button></div><div class="saved-address"><i></i><div><strong>${state.shippingAddress.full_name}</strong><p>${state.shippingAddress.address}<br>${state.shippingAddress.postal_code} ${state.shippingAddress.city}<br>${state.shippingAddress.country} · ${state.shippingAddress.phone}</p><span>Home</span></div><button type="button" aria-label="Edit saved address">✎</button></div><form class="address-form" id="address-form" hidden><label><span>Full Name</span><input name="full_name" required autocomplete="name" value="${state.shippingAddress.full_name}"></label><label><span>Email</span><input name="email" required type="email" autocomplete="email" value="${state.shippingAddress.email}"></label><label><span>Phone</span><input name="phone" required autocomplete="tel" value="${state.shippingAddress.phone}"></label><label class="full-field"><span>Address</span><input name="address" required autocomplete="street-address" value="${state.shippingAddress.address}"></label><label><span>City</span><input name="city" required autocomplete="address-level2" value="${state.shippingAddress.city}"></label><label><span>State</span><select name="state" autocomplete="address-level1"><option ${state.shippingAddress.state === "Kuala Lumpur" ? "selected" : ""}>Kuala Lumpur</option><option ${state.shippingAddress.state === "Selangor" ? "selected" : ""}>Selangor</option><option ${state.shippingAddress.state === "Johor" ? "selected" : ""}>Johor</option><option ${state.shippingAddress.state === "Penang" ? "selected" : ""}>Penang</option></select></label><label><span>Postal Code</span><input name="postal_code" required autocomplete="postal-code" value="${state.shippingAddress.postal_code}"></label><label><span>Country</span><select name="country" autocomplete="country-name"><option>Malaysia</option></select></label></form>`;
@@ -332,10 +407,12 @@ function renderCheckout() {
     return;
   }
   const items = cartItems().length ? cartItems() : [{ product: productById("3-fit-lion-divine"), quantity: 1 }];
+  const currency = cartCurrency();
+  const pricing = currencyPricing(currency);
   const subtotal = cartSubtotal() || 1850;
-  const deliveryFee = state.delivery === "express" ? 35 : state.delivery === "standard" ? 12 : 0;
-  const discount = state.promoApplied ? Math.min(100, subtotal * .08) : 0;
-  app.innerHTML = `<div class="checkout-page"><div class="checkout-brand"><button data-nav="cart">← Back</button><div class="brand"><span class="brand-mark">✦</span><span><strong>Divine Collection</strong></span></div><span>◇ Secure checkout</span></div><div class="container checkout-progress">${checkoutSteps()}</div><div class="container checkout-layout"><section class="checkout-card"><div id="checkout-stage">${checkoutStage()}</div><div class="checkout-actions">${state.checkoutStep ? `<button class="btn white" id="checkout-back" ${state.checkoutBusy ? "disabled" : ""}>Back</button>` : ""}<button class="btn primary" id="checkout-next" ${state.checkoutBusy ? "disabled aria-busy=\"true\"" : ""}>${state.checkoutBusy ? "Opening secure payment…" : state.checkoutStep === 3 ? "Continue to Payment ◇" : "Continue →"}</button></div></section><aside class="checkout-summary"><h2>Order summary <small>${items.length} items</small></h2><div class="checkout-items">${items.map(({ product, quantity }) => `<div>${image(product)}<span><strong>${product.name}</strong><small>Qty ${quantity}</small></span><b>${money(product.price * quantity)}</b></div>`).join("")}</div><dl><div><dt>Subtotal</dt><dd>${money(subtotal)}</dd></div><div><dt>Delivery</dt><dd>${deliveryFee ? money(deliveryFee) : "Free"}</dd></div>${state.promoApplied ? `<div class="green"><dt>DIVINE8</dt><dd>− ${money(discount)}</dd></div>` : ""}<div class="total"><dt>Total</dt><dd>${money(subtotal + deliveryFee - discount)}</dd></div></dl><div class="summary-safe">✓ <span><strong>Server-verified total</strong><small>Prices and stock are checked again before payment.</small></span></div></aside></div></div>`;
+  const deliveryFee = state.delivery === "express" ? pricing.express : state.delivery === "standard" ? pricing.standard : 0;
+  const discount = state.promoApplied ? Math.min(pricing.promoCap, subtotal * .08) : 0;
+  app.innerHTML = `<div class="checkout-page"><div class="checkout-brand"><button data-nav="cart">← Back</button><div class="brand"><span class="brand-mark">✦</span><span><strong>Divine Collection</strong></span></div><span>◇ Secure checkout</span></div><div class="container checkout-progress">${checkoutSteps()}</div><div class="container checkout-layout"><section class="checkout-card"><div id="checkout-stage">${checkoutStage()}</div><div class="checkout-actions">${state.checkoutStep ? `<button class="btn white" id="checkout-back" ${state.checkoutBusy ? "disabled" : ""}>Back</button>` : ""}<button class="btn primary" id="checkout-next" ${state.checkoutBusy ? "disabled aria-busy=\"true\"" : ""}>${state.checkoutBusy ? "Opening secure payment…" : state.checkoutStep === 3 ? "Continue to Payment ◇" : "Continue →"}</button></div></section><aside class="checkout-summary"><h2>Order summary <small>${items.length} items</small></h2><div class="checkout-items">${items.map(({ product, quantity }) => `<div>${image(product)}<span><strong>${product.name}</strong><small>Qty ${quantity}</small></span><b>${money(product.price * quantity, productCurrency(product))}</b></div>`).join("")}</div><dl><div><dt>Subtotal</dt><dd>${money(subtotal, currency)}</dd></div><div><dt>Delivery</dt><dd>${deliveryFee ? money(deliveryFee, currency) : "Free"}</dd></div>${state.promoApplied ? `<div class="green"><dt>DIVINE8</dt><dd>− ${money(discount, currency)}</dd></div>` : ""}<div class="total"><dt>Total</dt><dd>${money(subtotal + deliveryFee - discount, currency)}</dd></div></dl><div class="summary-safe">✓ <span><strong>Server-verified total</strong><small>Prices, currency and stock are checked again before payment.</small></span></div></aside></div></div>`;
 }
 
 function captureShippingAddress() {
@@ -419,7 +496,7 @@ async function hydrateOrderSuccess() {
       writeStorage();
     }
     const demo = order.status === "paid_demo";
-    app.innerHTML = `<section class="success-page"><div class="success-card"><span class="success-check ${paid ? "" : "warning"}">${paid ? "✓" : "⌛"}</span><span class="eyebrow">${demo ? "Preview payment approved" : paid ? "Payment confirmed" : "Payment processing"}</span><h1>${paid ? "Order Successful!" : "Your payment is processing"}</h1><p>${demo ? "The complete order flow worked. No real charge was made in preview mode." : paid ? "Your payment was verified and your order is now confirmed." : "We have your order and will update it as soon as the payment provider confirms it."}</p>${demo ? `<div class="demo-payment-note">Test mode · No money was charged</div>` : ""}<div class="success-details"><div><span>Order ID</span><strong>${order.id}</strong></div><div><span>Order total</span><strong>MYR ${order.total_myr}</strong></div><div><span>Payment status</span><strong>${order.status.replaceAll("_", " ")}</strong></div></div><button class="btn primary full" data-nav="tracking">View Order →</button><button class="btn white full" data-nav="shop">Continue Shopping</button><button class="share-receipt">↗ Share receipt</button></div><p class="success-note">✦ Thank you for choosing Divine Collection</p></section>`;
+    app.innerHTML = `<section class="success-page"><div class="success-card"><span class="success-check ${paid ? "" : "warning"}">${paid ? "✓" : "⌛"}</span><span class="eyebrow">${demo ? "Preview payment approved" : paid ? "Payment confirmed" : "Payment processing"}</span><h1>${paid ? "Order Successful!" : "Your payment is processing"}</h1><p>${demo ? "The complete order flow worked. No real charge was made in preview mode." : paid ? "Your payment was verified and your order is now confirmed." : "We have your order and will update it as soon as the payment provider confirms it."}</p>${demo ? `<div class="demo-payment-note">Test mode · No money was charged</div>` : ""}<div class="success-details"><div><span>Order ID</span><strong>${order.id}</strong></div><div><span>Order total</span><strong>${money(Number(order.total || order.total_myr), order.currency || "MYR")}</strong></div><div><span>Payment status</span><strong>${order.status.replaceAll("_", " ")}</strong></div></div><button class="btn primary full" data-nav="tracking">View Order →</button><button class="btn white full" data-nav="shop">Continue Shopping</button><button class="share-receipt">↗ Share receipt</button></div><p class="success-note">✦ Thank you for choosing Divine Collection</p></section>`;
     window.scrollTo({ top: 0, behavior: "auto" });
   } catch (error) {
     app.innerHTML = `<section class="success-page"><div class="success-card"><span class="success-check warning">!</span><span class="eyebrow">Confirmation delayed</span><h1>Your order needs a moment</h1><p>${error.message}</p><button class="btn primary full" data-nav="orders">View My Orders</button><button class="btn white full" data-nav="contact">Contact Support</button></div></section>`;
@@ -430,7 +507,7 @@ async function hydrateOrderSuccess() {
 function renderTracking() {
   const statuses = [["Order Placed", "8 Aug · 10:14 AM", true], ["Confirmed", "8 Aug · 10:18 AM", true], ["Packed", "8 Aug · 4:30 PM", true], ["Shipped", "9 Aug · 9:00 AM", true], ["Out for Delivery", "Expected 12 Aug", false], ["Delivered", "Expected 12–14 Aug", false]];
   const product = productById("3-fit-lion-divine");
-  app.innerHTML = `${pageHero("Your order journey", "Track Order", "Follow your collection from our care to your door.")}<section class="section"><div class="container tracking-layout"><article class="tracking-card"><div class="tracking-head"><div><span>Order #DC-240814</span><h2>Arriving 12–14 August</h2></div><b>♧ Shipped</b></div><div class="timeline">${statuses.map(([label, detail, done]) => `<div class="${done ? "done" : ""}"><span>${done ? "✓" : "□"}</span><p><strong>${label}</strong><small>${detail}</small></p></div>`).join("")}</div></article><aside class="tracking-side"><div class="track-product">${image(product)}<span><strong>${product.name}</strong><small>Qty 1 · ${money(product.price)}</small></span></div><dl><div><dt>Courier</dt><dd>J&amp;T Express</dd></div><div><dt>Tracking number</dt><dd>MYDC88921458</dd></div><div><dt>Shipping address</dt><dd>18, Jalan Damai Perdana 3<br>Kuala Lumpur, Malaysia</dd></div></dl><button class="btn outline full" data-nav="orders">View Order Details</button></aside></div></section>`;
+  app.innerHTML = `${pageHero("Your order journey", "Track Order", "Follow your collection from our care to your door.")}<section class="section"><div class="container tracking-layout"><article class="tracking-card"><div class="tracking-head"><div><span>Order #DC-240814</span><h2>Arriving 12–14 August</h2></div><b>♧ Shipped</b></div><div class="timeline">${statuses.map(([label, detail, done]) => `<div class="${done ? "done" : ""}"><span>${done ? "✓" : "□"}</span><p><strong>${label}</strong><small>${detail}</small></p></div>`).join("")}</div></article><aside class="tracking-side"><div class="track-product">${image(product)}<span><strong>${product.name}</strong><small>Qty 1 · ${money(product.price, productCurrency(product))}</small></span></div><dl><div><dt>Courier</dt><dd>J&amp;T Express</dd></div><div><dt>Tracking number</dt><dd>MYDC88921458</dd></div><div><dt>Shipping address</dt><dd>18, Jalan Damai Perdana 3<br>Kuala Lumpur, Malaysia</dd></div></dl><button class="btn outline full" data-nav="orders">View Order Details</button></aside></div></section>`;
 }
 
 function renderProfile() {
@@ -444,7 +521,7 @@ function renderProfile() {
 
 function renderOrders() {
   const orders = [["#DC-240814", "8 August 2026", "3-fit-lion-divine", 1850, "Shipped"], ["#DC-231109", "19 July 2026", "standed-steel-accessories", 190, "Delivered"], ["#DC-221876", "2 June 2026", "usb-stone-lighting", 1500, "Confirmed"]];
-  app.innerHTML = `${pageHero("Purchase history", "My Orders", "View, track and revisit your Divine Collection orders.")}<section class="section"><div class="container"><div class="order-filters"><button class="active">All orders</button><button>Processing</button><button>Shipped</button><button>Delivered</button><button>Cancelled</button></div><div class="orders">${orders.map(([id, date, productId, amount, status]) => { const product = productById(productId); return `<article class="order"><header><div><strong>Order ${id}</strong><small>Placed ${date}</small></div><span class="status ${String(status).toLowerCase()}">${status}</span></header><div class="order-body">${image(product)}<span><strong>${product.name}</strong><small>1 item · ${product.category}</small></span><b>${money(amount)}</b></div><footer><button class="btn white" data-nav="tracking">View Order</button>${status !== "Delivered" ? `<button class="btn outline" data-nav="tracking">♧ Track Order</button>` : ""}<button class="btn primary" data-product="${product.id}">Buy Again</button></footer></article>`; }).join("")}</div></div></section>`;
+  app.innerHTML = `${pageHero("Purchase history", "My Orders", "View, track and revisit your Divine Collection orders.")}<section class="section"><div class="container"><div class="order-filters"><button class="active">All orders</button><button>Processing</button><button>Shipped</button><button>Delivered</button><button>Cancelled</button></div><div class="orders">${orders.map(([id, date, productId, amount, status]) => { const product = productById(productId); return `<article class="order"><header><div><strong>Order ${id}</strong><small>Placed ${date}</small></div><span class="status ${String(status).toLowerCase()}">${status}</span></header><div class="order-body">${image(product)}<span><strong>${product.name}</strong><small>1 item · ${product.category}</small></span><b>${money(amount, productCurrency(product))}</b></div><footer><button class="btn white" data-nav="tracking">View Order</button>${status !== "Delivered" ? `<button class="btn outline" data-nav="tracking">♧ Track Order</button>` : ""}<button class="btn primary" data-product="${product.id}">Buy Again</button></footer></article>`; }).join("")}</div></div></section>`;
 }
 
 const INFO = {
@@ -480,11 +557,11 @@ function adminContent() {
   if (["categories", "customers", "discounts", "banners"].includes(state.adminSection)) return adminSimple();
   const metrics = [["Total Revenue", "MYR 128,450", "+12.4%", "◇"], ["Total Orders", "384", "+8.2%", "▱"], ["Total Products", state.catalog.length, "All active", "□"], ["Total Customers", "1,248", "+18.6%", "○"]];
   const bars = [42, 58, 49, 72, 63, 88, 76, 96, 85, 110, 92, 122];
-  return `<div class="admin-title"><div><span>Saturday, 9 August</span><h2>Good afternoon, Aishah</h2><p>Here’s what’s happening with Divine Collection today.</p></div><button class="btn primary" id="admin-add">＋ Add Product</button></div><div class="metrics">${metrics.map(([label, value, trend, icon]) => `<article><div><span>${icon}</span><small>${trend}</small></div><p>${label}</p><strong>${value}</strong></article>`).join("")}</div><div class="admin-grid"><article class="admin-card chart-card"><header><div><h3>Revenue overview</h3><p>Monthly sales performance</p></div><button>Last 12 months</button></header><div class="chart-total"><strong>MYR 128,450</strong><span>+12.4% vs last year</span></div><div class="bar-chart">${bars.map((height, index) => `<div><span style="height:${height}px"></span><small>${["Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"][index]}</small></div>`).join("")}</div></article><article class="admin-card top-products"><header><div><h3>Top products</h3><p>By revenue this month</p></div><button data-admin="products">View all</button></header>${state.catalog.slice(0, 4).map((product, index) => `<div><b>0${index + 1}</b>${image(product)}<span><strong>${product.name}</strong><small>${18 - index * 3} sold</small></span><em>${money(product.price * (18 - index * 3))}</em></div>`).join("")}</article></div><div class="admin-grid lower"><article class="admin-card"><header><div><h3>Recent orders</h3><p>Latest customer activity</p></div><button data-admin="orders">Manage orders</button></header>${adminOrders(true)}</article><article class="admin-card inventory"><header><div><h3>Inventory health</h3><p>Current stock overview</p></div><span>▦</span></header><div class="inventory-ring"><span><strong>${state.catalog.reduce((sum, product) => sum + product.stock, 0)}</strong><small>Total units</small></span></div><p><i class="green-dot"></i>Healthy stock <b>5</b></p><p><i class="gold-dot"></i>Low stock <b>1</b></p><p><i class="red-dot"></i>Out of stock <b>0</b></p></article></div>`;
+  return `<div class="admin-title"><div><span>Saturday, 9 August</span><h2>Good afternoon, Aishah</h2><p>Here’s what’s happening with Divine Collection today.</p></div><button class="btn primary" id="admin-add">＋ Add Product</button></div><div class="metrics">${metrics.map(([label, value, trend, icon]) => `<article><div><span>${icon}</span><small>${trend}</small></div><p>${label}</p><strong>${value}</strong></article>`).join("")}</div><div class="admin-grid"><article class="admin-card chart-card"><header><div><h3>Revenue overview</h3><p>Monthly sales performance</p></div><button>Last 12 months</button></header><div class="chart-total"><strong>MYR 128,450</strong><span>+12.4% vs last year</span></div><div class="bar-chart">${bars.map((height, index) => `<div><span style="height:${height}px"></span><small>${["Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"][index]}</small></div>`).join("")}</div></article><article class="admin-card top-products"><header><div><h3>Top products</h3><p>By revenue this month</p></div><button data-admin="products">View all</button></header>${state.catalog.slice(0, 4).map((product, index) => `<div><b>0${index + 1}</b>${image(product)}<span><strong>${product.name}</strong><small>${18 - index * 3} sold</small></span><em>${money(product.price * (18 - index * 3), productCurrency(product))}</em></div>`).join("")}</article></div><div class="admin-grid lower"><article class="admin-card"><header><div><h3>Recent orders</h3><p>Latest customer activity</p></div><button data-admin="orders">Manage orders</button></header>${adminOrders(true)}</article><article class="admin-card inventory"><header><div><h3>Inventory health</h3><p>Current stock overview</p></div><span>▦</span></header><div class="inventory-ring"><span><strong>${state.catalog.reduce((sum, product) => sum + product.stock, 0)}</strong><small>Total units</small></span></div><p><i class="green-dot"></i>Healthy stock <b>5</b></p><p><i class="gold-dot"></i>Low stock <b>1</b></p><p><i class="red-dot"></i>Out of stock <b>0</b></p></article></div>`;
 }
 
 function adminProducts() {
-  return `<div class="admin-title"><div><span>Catalog management</span><h2>All products</h2><p>Update pricing, stock and product information.</p></div><button class="btn primary" id="admin-add">＋ Add Product</button></div><div class="admin-table"><div class="table-tools"><label>⌕ <input placeholder="Search products"></label><button>☷ Filter</button><button>⇧ Import</button></div><div class="table-scroll"><table><thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead><tbody>${state.catalog.map(product => `<tr><td><div class="table-product">${image(product)}<span><strong>${product.name}</strong><small>${product.sku}</small></span></div></td><td>${product.category}</td><td><strong>${money(product.price)}</strong></td><td>${product.stock}</td><td><span class="status delivered">Active</span></td><td><button data-admin-edit="${product.id}">✎</button><button data-admin-delete="${product.id}">⌫</button></td></tr>`).join("")}</tbody></table></div></div>`;
+  return `<div class="admin-title"><div><span>Catalog management</span><h2>All products</h2><p>Update pricing, stock and product information.</p></div><button class="btn primary" id="admin-add">＋ Add Product</button></div><div class="admin-table"><div class="table-tools"><label>⌕ <input placeholder="Search products"></label><button>☷ Filter</button><button>⇧ Import</button></div><div class="table-scroll"><table><thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead><tbody>${state.catalog.map(product => `<tr><td><div class="table-product">${image(product)}<span><strong>${product.name}</strong><small>${product.sku}</small></span></div></td><td>${product.category}</td><td><strong>${money(product.price, productCurrency(product))}</strong></td><td>${product.stock}</td><td><span class="status delivered">Active</span></td><td><button data-admin-edit="${product.id}">✎</button><button data-admin-delete="${product.id}">⌫</button></td></tr>`).join("")}</tbody></table></div></div>`;
 }
 
 function adminOrders(compact = false) {
@@ -556,6 +633,14 @@ function notify(message) {
 }
 
 function addToCart(id, quantity = 1) {
+  const product = productById(id);
+  const targetCurrency = productCurrency(product);
+  const currentCurrency = state.cart.length ? cartCurrency() : targetCurrency;
+  if (state.cart.length && currentCurrency !== targetCurrency) {
+    const switchCart = window.confirm(`Your cart contains ${currentCurrency} products. Start a new ${targetCurrency} cart for ${product.name}?`);
+    if (!switchCart) return;
+    state.cart = [];
+  }
   const item = state.cart.find(entry => entry.id === id);
   if (item) item.quantity += quantity;
   else state.cart.push({ id, quantity });
@@ -580,7 +665,7 @@ function toggleWishlist(id) {
 function openQuickView(id) {
   const product = productById(id);
   modalLayer.hidden = false;
-  modalLayer.innerHTML = `<div class="modal-backdrop" data-close-modal><article class="quick-modal" role="dialog" aria-modal="true" aria-label="Quick view ${product.name}"><button class="modal-close" data-close-modal aria-label="Close">×</button>${image(product)}<div><span class="eyebrow">${product.category}</span><h2>${product.name}</h2>${stars(product)}<p>${product.description}</p><strong class="detail-price">${money(product.price)}</strong><div class="button-row"><button class="btn outline" data-product="${product.id}">View details</button><button class="btn primary" data-add="${product.id}">▱ Add to cart</button></div></div></article></div>`;
+  modalLayer.innerHTML = `<div class="modal-backdrop" data-close-modal><article class="quick-modal" role="dialog" aria-modal="true" aria-label="Quick view ${product.name}"><button class="modal-close" data-close-modal aria-label="Close">×</button>${image(product)}<div><span class="eyebrow">${product.category}</span><h2>${product.name}</h2>${stars(product)}<p>${product.description}</p><strong class="detail-price">${money(product.price, productCurrency(product))}</strong><div class="button-row"><button class="btn outline" data-product="${product.id}">View details</button><button class="btn primary" data-add="${product.id}">▱ Add to cart</button></div></div></article></div>`;
   document.body.classList.add("modal-open");
 }
 
@@ -626,7 +711,7 @@ document.addEventListener("click", event => {
   const close = event.target.closest("[data-close-modal]");
   if (close && (close === event.target || close.tagName === "BUTTON")) { closeModal(); return; }
 
-  if (event.target.closest("#reset-filters")) { state.category = ""; state.query = ""; state.maxPrice = 3000; render(); }
+  if (event.target.closest("#reset-filters")) { state.category = ""; state.query = ""; state.maxPrice = 9000; render(); }
   if (event.target.closest("#clear-category")) { state.category = ""; render(); }
   if (event.target.closest("#mobile-filter")) document.querySelector(".filters")?.classList.toggle("open");
 

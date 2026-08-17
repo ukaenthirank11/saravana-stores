@@ -19,21 +19,24 @@ test("uses a framework-free HTML, CSS and JavaScript storefront", async () => {
   assert.match(css, /Photo-free editorial product artwork/);
   assert.match(js, /3 FIT LION DIVINE/);
   assert.match(js, /GANESHA STONE LAMP/);
-  assert.match(js, /Home Décor", 25/);
+  assert.match(js, /Brass Lotus Multi Diya Urli Stand/);
+  assert.match(js, /Antique Brass Temple Bell/);
+  assert.match(js, /Home Décor", 33/);
   assert.match(js, /MYR/);
+  assert.match(js, /INR/);
+  assert.match(js, /<img class="product-image product-photo/);
   assert.match(js, /photo-free product artwork/);
-  assert.doesNotMatch(js, /<img|\/assets\/Screenshot|divine-products-reference|crop:/);
+  assert.doesNotMatch(js, /\/assets\/Screenshot|codex-clipboard|divine-products-reference|crop:/);
   assert.doesNotMatch(html, /og:image|twitter:image|\/assets\/Screenshot/);
   assert.match(js, /\/api\/checkout\/session/);
   assert.match(js, /serviceWorker\.register/);
   assert.doesNotMatch(packageJson, /react|next|vinext|tailwind/i);
 });
 
-test("build output contains the static site and Cloudflare worker", async () => {
-  for (const path of ["dist/client/index.html", "dist/client/styles.css", "dist/client/app.js", "dist/client/manifest.webmanifest", "dist/client/sw.js", "dist/server/index.js", "dist/server/wrangler.json", "dist/.openai/hosting.json"]) {
+test("build output contains the static site, product photography and Cloudflare worker", async () => {
+  for (const path of ["dist/client/index.html", "dist/client/styles.css", "dist/client/app.js", "dist/client/manifest.webmanifest", "dist/client/sw.js", "dist/client/products/brass-lotus-multi-diya-urli-stand.webp", "dist/client/products/antique-brass-temple-bell.webp", "dist/server/index.js", "dist/server/wrangler.json", "dist/.openai/hosting.json"]) {
     await access(new URL(path, root));
   }
-  await assert.rejects(access(new URL("dist/client/assets", root)));
 
   const worker = await import(new URL(`dist/server/index.js?test=${Date.now()}`, root));
   const response = await worker.default.fetch(new Request("https://example.test/api/health"), { ASSETS: { fetch: () => new Response("Not found", { status: 404 }) } });

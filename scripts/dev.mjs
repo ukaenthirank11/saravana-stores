@@ -6,7 +6,7 @@ import { extname, join, normalize, resolve } from "node:path";
 const root = resolve(import.meta.dirname, "..");
 const port = Number(process.env.PORT || 3000);
 const apiOrigin = process.env.FASTAPI_ORIGIN || "http://127.0.0.1:8000";
-const mime = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".json": "application/json; charset=utf-8", ".webmanifest": "application/manifest+json; charset=utf-8", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".svg": "image/svg+xml" };
+const mime = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".json": "application/json; charset=utf-8", ".webmanifest": "application/manifest+json; charset=utf-8", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".svg": "image/svg+xml" };
 
 async function proxyApi(request, response, url) {
   try {

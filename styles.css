@@ -675,6 +675,18 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 }
 
 /* Photo-free editorial product artwork */
+.product-image.product-photo {
+  display: block;
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+  background: #f4eee8;
+}
+.card-media .product-image.product-photo,
+.main-image > .product-image.product-photo,
+.quick-modal > .product-image.product-photo { object-fit: cover; }
+.home-categories .category-card > .product-image.product-photo { object-position: center 72%; }
+
 .product-image.photo-free {
   --art-1: #351105;
   --art-2: #8a471e;
