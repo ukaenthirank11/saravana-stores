@@ -8,14 +8,6 @@
   "orientation": "any",
   "background_color": "#fffaf2",
   "theme_color": "#421707",
-  "icons": [
-    {
-      "src": "/assets/Screenshot%202026-08-10%20221746.png",
-      "sizes": "any",
-      "type": "image/png",
-      "purpose": "any"
-    }
-  ],
   "shortcuts": [
     { "name": "Shop collection", "short_name": "Shop", "url": "/shop" },
     { "name": "My cart", "short_name": "Cart", "url": "/cart" },
