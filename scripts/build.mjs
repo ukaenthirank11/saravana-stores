@@ -27,10 +27,15 @@ await mkdir(resolve(dist, ".openai"), { recursive: true });
 await cp(resolve(root, ".openai", "hosting.json"), resolve(dist, ".openai", "hosting.json"));
 await cp(resolve(root, "drizzle"), resolve(dist, ".openai", "drizzle"), { recursive: true });
 
-const html = await readFile(resolve(client, "index.html"), "utf8");
+const indexPath = resolve(client, "index.html");
+let html = await readFile(indexPath, "utf8");
 if (!html.includes("Divine Collection") || !html.includes("/app.js") || !html.includes("/styles.css") || !html.includes("/manifest.webmanifest")) {
   throw new Error("Static storefront build is incomplete.");
 }
+html = html
+  .replace('href="/styles.css"', 'href="/styles.css?v=original-png-v1"')
+  .replace('src="/app.js"', 'src="/app.js?v=original-png-v1"');
+await writeFile(indexPath, html);
 
 await writeFile(resolve(dist, "BUILD_COMPLETE"), "Divine Collection vanilla HTML/CSS/JS build\n");
 console.log("Divine Collection static build completed.");

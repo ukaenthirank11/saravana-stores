@@ -1,4 +1,4 @@
-const CACHE_NAME = "divine-collection-v8";
+const CACHE_NAME = "divine-collection-v9";
 const APP_SHELL = [
   "/",
   "/index.html",
@@ -38,7 +38,7 @@ self.addEventListener("fetch", event => {
     return;
   }
 
-  if (url.pathname.startsWith("/products/")) {
+  if (url.pathname.startsWith("/products/") || ["/app.js", "/styles.css"].includes(url.pathname)) {
     event.respondWith(
       fetch(request)
         .then(response => {

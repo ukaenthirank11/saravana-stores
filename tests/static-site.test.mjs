@@ -39,6 +39,9 @@ test("build output contains the static site, product photography and Cloudflare 
   }
 
   const worker = await import(new URL(`dist/server/index.js?test=${Date.now()}`, root));
+  const builtHtml = await readFile(new URL("dist/client/index.html", root), "utf8");
+  assert.match(builtHtml, /styles\.css\?v=original-png-v1/);
+  assert.match(builtHtml, /app\.js\?v=original-png-v1/);
   const response = await worker.default.fetch(new Request("https://example.test/api/health"), { ASSETS: { fetch: () => new Response("Not found", { status: 404 }) } });
   assert.equal(response.status, 503);
   assert.equal((await response.json()).stack, "HTML, CSS, JavaScript + FastAPI");
@@ -78,6 +81,6 @@ test("publishes product photos with image headers and a fresh offline cache", as
 
   assert.match(headers, /\/products\/\*/);
   assert.match(headers, /Content-Type: image\/png/);
-  assert.match(serviceWorker, /divine-collection-v8/);
+  assert.match(serviceWorker, /divine-collection-v9/);
   assert.match(serviceWorker, /url\.pathname\.startsWith\("\/products\/"\)/);
 });
