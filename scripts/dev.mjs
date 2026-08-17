@@ -37,9 +37,10 @@ async function proxyApi(request, response, url) {
 }
 
 async function findFile(pathname) {
-  const cleaned = normalize(decodeURIComponent(pathname)).replace(/^(\.\.[/\\])+/, "");
-  if (cleaned.startsWith("products/") && cleaned.endsWith(".png")) {
-    const source = productImages.get(cleaned.slice("products/".length, -".png".length));
+  const requestPath = decodeURIComponent(pathname).replaceAll("\\", "/");
+  const cleaned = normalize(requestPath).replace(/^(\.\.[/\\])+/, "");
+  if (requestPath.startsWith("products/") && requestPath.endsWith(".png")) {
+    const source = productImages.get(requestPath.slice("products/".length, -".png".length));
     if (source) return resolve(root, "assets", "Products", source);
   }
   const candidates = [join(root, cleaned), join(root, "public", cleaned)];

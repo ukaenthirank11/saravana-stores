@@ -33,26 +33,16 @@ test("uses a framework-free HTML, CSS and JavaScript storefront", async () => {
   assert.doesNotMatch(packageJson, /react|next|vinext|tailwind/i);
 });
 
-test("build output contains the static site, product photography and Cloudflare worker", async () => {
-  for (const path of ["dist/client/index.html", "dist/client/styles.css", "dist/client/app.js", "dist/client/manifest.webmanifest", "dist/client/sw.js", "dist/client/products/brass-lotus-multi-diya-urli-stand.png", "dist/client/products/antique-brass-temple-bell.png", "dist/server/index.js", "dist/server/wrangler.json", "dist/.openai/hosting.json"]) {
+test("build output contains the standalone site and original product photography", async () => {
+  for (const path of ["dist/client/index.html", "dist/client/styles.css", "dist/client/app.js", "dist/client/manifest.webmanifest", "dist/client/sw.js", "dist/client/products/brass-lotus-multi-diya-urli-stand.png", "dist/client/products/antique-brass-temple-bell.png"]) {
     await access(new URL(path, root));
   }
 
-  const worker = await import(new URL(`dist/server/index.js?test=${Date.now()}`, root));
   const builtHtml = await readFile(new URL("dist/client/index.html", root), "utf8");
   assert.match(builtHtml, /styles\.css\?v=original-png-v1/);
   assert.match(builtHtml, /app\.js\?v=original-png-v1/);
-  const response = await worker.default.fetch(new Request("https://example.test/api/health"), { ASSETS: { fetch: () => new Response("Not found", { status: 404 }) } });
-  assert.equal(response.status, 503);
-  assert.equal((await response.json()).stack, "HTML, CSS, JavaScript + FastAPI");
-
-  const imageResponse = await worker.default.fetch(
-    new Request("https://example.test/products/brass-lotus-multi-diya-urli-stand.png"),
-    { ASSETS: { fetch: () => new Response(new Uint8Array([1, 2, 3]), { headers: { "Content-Type": "application/octet-stream" } }) } }
-  );
-  assert.equal(imageResponse.status, 200);
-  assert.equal(imageResponse.headers.get("Content-Type"), "image/png");
-  assert.match(imageResponse.headers.get("Cache-Control"), /immutable/);
+  const productImage = await readFile(new URL("dist/client/products/brass-lotus-multi-diya-urli-stand.png", root));
+  assert.deepEqual([...productImage.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
 });
 
 test("maps every supplied source photograph to a storefront product", async () => {
@@ -73,14 +63,8 @@ test("maps every supplied source photograph to a storefront product", async () =
   }
 });
 
-test("publishes product photos with image headers and a fresh offline cache", async () => {
-  const [headers, serviceWorker] = await Promise.all([
-    readFile(new URL("public/_headers", root), "utf8"),
-    readFile(new URL("public/sw.js", root), "utf8")
-  ]);
-
-  assert.match(headers, /\/products\/\*/);
-  assert.match(headers, /Content-Type: image\/png/);
+test("uses a fresh offline cache for product photos", async () => {
+  const serviceWorker = await readFile(new URL("public/sw.js", root), "utf8");
   assert.match(serviceWorker, /divine-collection-v9/);
   assert.match(serviceWorker, /url\.pathname\.startsWith\("\/products\/"\)/);
 });

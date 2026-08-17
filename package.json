@@ -10,7 +10,7 @@
     "dev": "node scripts/dev.mjs",
     "dev:api": "node scripts/start-api.mjs",
     "build": "node scripts/build.mjs",
-    "lint": "node --check app.js && node --check worker/index.js && node --check scripts/build.mjs && node --check scripts/dev.mjs && node --check scripts/start-api.mjs && node --check scripts/test-api.mjs",
+    "lint": "node --check app.js && node --check scripts/build.mjs && node --check scripts/dev.mjs && node --check scripts/start-api.mjs && node --check scripts/test-api.mjs",
     "test": "npm run build && node --test tests/static-site.test.mjs && node scripts/test-api.mjs",
     "db:generate": "drizzle-kit generate"
   },
