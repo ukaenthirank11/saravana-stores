@@ -18,6 +18,8 @@ test("uses a framework-free HTML, CSS and JavaScript storefront", async () => {
   assert.match(html, /manifest\.webmanifest/);
   assert.match(css, /Photo-free editorial product artwork/);
   assert.match(js, /3 FIT LION DIVINE/);
+  assert.match(js, /GANESHA STONE LAMP/);
+  assert.match(js, /Home Décor", 25/);
   assert.match(js, /MYR/);
   assert.match(js, /photo-free product artwork/);
   assert.doesNotMatch(js, /<img|\/assets\/Screenshot|divine-products-reference|crop:/);

@@ -79,12 +79,45 @@ const PRODUCTS = [
   }
 ];
 
+const CATEGORY_FEATURES = {
+  "Divine Home": ["Refined devotional presence", "Premium decorative finish", "Designed for contemporary homes", "Easy-care surfaces", "Securely packed", "Suitable for meaningful gifting"],
+  Temples: ["Traditional architectural detailing", "Stable premium construction", "Designed for daily worship", "Elegant sacred proportions", "Easy to maintain", "Suitable for indoor spiritual spaces"],
+  Accessories: ["Practical devotional design", "Durable material selection", "Compact and easy to arrange", "Easy to clean", "Traditional styling", "Ideal for home pooja use"],
+  Lighting: ["Warm ambient illumination", "Energy-conscious design", "Simple everyday operation", "Decorative sacred styling", "Carefully finished", "Suitable for gifting"]
+};
+
+const EXTENDED_PRODUCT_DATA = [
+  ["sacred-arch-home-temple", "SACRED ARCH HOME TEMPLE", 85, 1280, "Divine Home", 4.8, 41, "DC-DH-1001", "An elegant arched home temple created to bring a calm, refined focal point to prayer rooms and living spaces.", "portrait"],
+  ["royal-lion-prayer-cabinet", "ROYAL LION PRAYER CABINET", 42, 2750, "Divine Home", 4.9, 36, "DC-DH-1002", "A statement prayer cabinet with generous storage and a dignified architectural presence for larger devotional spaces.", "portrait"],
+  ["peacock-arch-home-shrine", "PEACOCK ARCH HOME SHRINE", 64, 2350, "Divine Home", 4.8, 29, "DC-DH-1003", "A graceful home shrine inspired by peacock forms and traditional arches, balanced for elegant modern interiors.", "portrait"],
+  ["wall-mounted-divine-altar", "WALL MOUNTED DIVINE ALTAR", 110, 980, "Divine Home", 4.7, 52, "DC-DH-1004", "A space-saving wall altar designed for apartments, offices and thoughtfully arranged devotional corners.", "landscape"],
+  ["heritage-gopuram-temple", "HERITAGE GOPURAM TEMPLE", 38, 2450, "Temples", 4.9, 47, "DC-TP-2001", "A layered temple form inspired by heritage gopuram architecture, created as a distinguished spiritual centerpiece.", "portrait"],
+  ["compact-prayer-mandir", "COMPACT PRAYER MANDIR", 120, 890, "Temples", 4.7, 63, "DC-TP-2002", "A compact mandir with practical proportions for bedrooms, apartments, studios and office prayer spaces.", "portrait"],
+  ["golden-pillar-temple", "GOLDEN PILLAR TEMPLE", 70, 1750, "Temples", 4.8, 38, "DC-TP-2003", "A pillar-inspired devotional temple with a warm golden character and a strong traditional silhouette.", "portrait"],
+  ["outdoor-devotion-shrine", "OUTDOOR DEVOTION SHRINE", 31, 2100, "Temples", 4.8, 22, "DC-TP-2004", "A durable devotional shrine proportioned for sheltered balconies, entrances and thoughtfully prepared outdoor settings.", "portrait"],
+  ["classic-pooja-cabinet", "CLASSIC POOJA CABINET", 48, 2650, "Temples", 4.9, 34, "DC-TP-2005", "A classic pooja cabinet combining sacred display space, useful storage and an enduring furniture-like finish.", "portrait"],
+  ["temple-bell-set", "TEMPLE BELL SET", 150, 240, "Accessories", 4.7, 71, "DC-AC-3001", "A coordinated set of devotional bells for home temples, ceremonies and daily prayer rituals.", "square"],
+  ["stainless-pooja-thali", "STAINLESS POOJA THALI", 135, 320, "Accessories", 4.8, 58, "DC-AC-3002", "A complete stainless pooja thali arranged for practical daily use and special devotional occasions.", "square"],
+  ["trishul-accessory-stand", "TRISHUL ACCESSORY STAND", 74, 290, "Accessories", 4.7, 33, "DC-AC-3003", "A stable trishul-inspired accessory stand that adds vertical presence to temple and prayer arrangements.", "portrait"],
+  ["brass-diya-pair", "BRASS DIYA PAIR", 180, 180, "Accessories", 4.9, 96, "DC-AC-3004", "A balanced pair of traditional diya forms for warm ceremonial light and everyday prayer settings.", "square"],
+  ["lotus-incense-holder", "LOTUS INCENSE HOLDER", 210, 120, "Accessories", 4.6, 84, "DC-AC-3005", "A compact lotus-inspired incense holder designed to keep devotional spaces orderly and elegant.", "square"],
+  ["kumkum-storage-box", "KUMKUM STORAGE BOX", 160, 160, "Accessories", 4.7, 45, "DC-AC-3006", "A decorative storage box for kumkum and small pooja essentials with a refined traditional character.", "square"],
+  ["led-sacred-backlight", "LED SACRED BACKLIGHT", 95, 780, "Lighting", 4.8, 39, "DC-LG-4001", "A warm LED backlight designed to create a soft halo behind framed deities, altars and devotional displays.", "landscape"],
+  ["usb-om-arch-light", "USB OM ARCH LIGHT", 125, 520, "Lighting", 4.7, 55, "DC-LG-4002", "A convenient USB-powered arch light featuring a calm Om-inspired presentation for desks and compact shrines.", "portrait"],
+  ["warm-temple-strip-light", "WARM TEMPLE STRIP LIGHT", 140, 360, "Lighting", 4.6, 42, "DC-LG-4003", "A flexible warm lighting solution for outlining home temples, cabinets and sacred display niches.", "landscape"],
+  ["ganesha-stone-lamp", "GANESHA STONE LAMP", 58, 1250, "Lighting", 4.9, 31, "DC-LG-4004", "A substantial decorative lamp with a Ganesha-inspired identity and a peaceful ambient glow.", "square"]
+];
+
+PRODUCTS.push(...EXTENDED_PRODUCT_DATA.map(([id, name, stock, price, category, rating, reviews, sku, description, imageOrientation]) => ({
+  id, name, stock, price, category, rating, reviews, sku, imageOrientation, description, features: CATEGORY_FEATURES[category]
+})));
+
 const CATEGORIES = [
-  ["Divine Home", 3, "lion-divine-home"],
-  ["Temples", 1, "lion-golden-temple"],
-  ["Accessories", 1, "standed-steel-accessories"],
-  ["Lighting", 1, "usb-stone-lighting"],
-  ["Home Décor", 4, "3-fit-lion-divine"]
+  ["Divine Home", 7, "lion-divine-home"],
+  ["Temples", 6, "lion-golden-temple"],
+  ["Accessories", 7, "standed-steel-accessories"],
+  ["Lighting", 5, "usb-stone-lighting"],
+  ["Home Décor", 25, "3-fit-lion-divine"]
 ];
 
 const PATHS = {
@@ -153,7 +186,9 @@ function productById(id) {
 
 function image(product, className = "") {
   const marks = { "3-fit-lion-divine": "III", "golden-black-3-fit-divine": "GB", "lion-divine-home": "LD", "standed-steel-accessories": "A5", "usb-stone-lighting": "USB", "lion-golden-temple": "LT" };
-  return `<div class="product-image photo-free ${product.imageOrientation} ${className}" data-product-image="${product.id}" role="img" aria-label="${product.name} photo-free product artwork"><div class="art-board" aria-hidden="true"><span class="art-kicker">DIVINE COLLECTION</span><strong class="art-mark">${marks[product.id] || "DC"}</strong><span class="art-name">${product.name}</span><small>${product.category} · ${product.sku}</small></div></div>`;
+  const generatedMark = product.name.split(/\s+/).map(word => word[0]).join("").slice(0, 3);
+  const palette = product.category.toLowerCase().replaceAll(" ", "-");
+  return `<div class="product-image photo-free ${product.imageOrientation} ${className}" data-product-image="${product.id}" data-art-palette="${palette}" role="img" aria-label="${product.name} photo-free product artwork"><div class="art-board" aria-hidden="true"><span class="art-kicker">DIVINE COLLECTION</span><strong class="art-mark">${marks[product.id] || generatedMark}</strong><span class="art-name">${product.name}</span><small>${product.category} · ${product.sku}</small></div></div>`;
 }
 
 function stars(product) {
@@ -213,7 +248,7 @@ function renderHome() {
   </div></section>
   ${trustSection()}
   <section class="section home-categories"><div class="container">${sectionHeading("Curated with purpose", "Shop by category", "Explore signature pieces for prayer, décor and meaningful gifting.", "View all", "categories")}<div class="category-grid">${CATEGORIES.map(([name, , id]) => `<button class="category-card" data-category="${name}">${image(productById(id))}<span><strong>${name}</strong><small>Explore collection</small></span></button>`).join("")}</div></div></section>
-  <section class="section featured"><div class="container">${sectionHeading("Customer favourites", "Best sellers", "Our most-loved sacred pieces, available in their original finishes.", "View all products", "shop")}<div class="product-grid home-products">${state.catalog.map(product => card(product)).join("")}</div></div></section>
+  <section class="section featured"><div class="container">${sectionHeading("Customer favourites", "Best sellers", "Our most-loved sacred pieces, available in their original finishes.", "View all products", "shop")}<div class="product-grid home-products">${state.catalog.slice(0, 6).map(product => card(product)).join("")}</div></div></section>
   <section class="section promos"><div class="container"><article class="promo-main"><div class="promo-copy"><span class="eyebrow light">EXCLUSIVE DIVINE EDIT</span><h2>Sacred Spaces,<br>Beautifully Made</h2><p>Discover statement temples and devotional décor selected for enduring beauty.</p><button class="btn promo-button" data-nav="shop">EXPLORE COLLECTION</button></div>${image(productById("lion-golden-temple"))}<span class="promo-seal">PREMIUM<br>COLLECTION</span></article></div></section>`;
 }
 

@@ -39,7 +39,11 @@ class CommerceApiTests(unittest.TestCase):
         products = self.client.get("/api/products")
         self.assertEqual(products.status_code, 200)
         self.assertEqual(products.json()["currency"], "MYR")
-        self.assertEqual(len(products.json()["products"]), 6)
+        catalogue = products.json()["products"]
+        self.assertEqual(len(catalogue), 25)
+        ganesha_lamp = next(product for product in catalogue if product["id"] == "ganesha-stone-lamp")
+        self.assertEqual(ganesha_lamp["price_myr"], "1250.00")
+        self.assertEqual(ganesha_lamp["stock"], 58)
 
     def test_demo_checkout_uses_server_prices_and_persists_order(self) -> None:
         response = self.client.post(
@@ -48,6 +52,7 @@ class CommerceApiTests(unittest.TestCase):
                 "items": [
                     {"product_id": "3-fit-lion-divine", "quantity": 1},
                     {"product_id": "standed-steel-accessories", "quantity": 1},
+                    {"product_id": "ganesha-stone-lamp", "quantity": 1},
                 ],
                 "delivery": "standard",
                 "promo_code": "DIVINE8",
@@ -66,13 +71,13 @@ class CommerceApiTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200, response.text)
         checkout = response.json()
         self.assertEqual(checkout["mode"], "demo")
-        self.assertEqual(checkout["total_myr"], "1952.00")
+        self.assertEqual(checkout["total_myr"], "3202.00")
         self.assertIn("order-success", checkout["checkout_url"])
 
         order = self.client.get(f"/api/orders/{checkout['order_id']}")
         self.assertEqual(order.status_code, 200)
         self.assertEqual(order.json()["status"], "paid_demo")
-        self.assertEqual(order.json()["total_myr"], "1952.00")
+        self.assertEqual(order.json()["total_myr"], "3202.00")
 
     def test_unknown_products_are_rejected(self) -> None:
         response = self.client.post(
