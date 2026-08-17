@@ -319,6 +319,9 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .catalog-inner .desktop-nav button { padding: 15px 7px; color: #3f3128; font-size: 11px; font-weight: 650; white-space: nowrap; }
 .catalog-inner .desktop-nav button::after { right: 7px; bottom: 7px; left: 7px; height: 1px; background: #a86c15; }
 .catalog-inner .desktop-nav .sale-link { color: #9f4d18; font-weight: 800; }
+.compact-catalog { grid-template-columns: 1fr; }
+.compact-catalog .desktop-nav { justify-content: center; gap: clamp(46px, 9vw, 150px); }
+.compact-catalog .desktop-nav button { min-width: 100px; text-align: center; }
 
 .hero.retail-hero { position: relative; min-height: 540px; overflow: hidden; border-bottom: 1px solid #eadccf; background: radial-gradient(circle at 79% 44%, rgba(255,255,255,.9) 0 12%, transparent 38%), linear-gradient(105deg, #fff9ef 0%, #f8e6ce 51%, #efd6b8 100%); }
 .retail-hero::before { position: absolute; inset: 0; content: ""; background-image: radial-gradient(circle at center, rgba(115,65,25,.08) 1px, transparent 1.5px); background-size: 24px 24px; mask-image: linear-gradient(90deg, transparent 47%, black); opacity: .52; }
