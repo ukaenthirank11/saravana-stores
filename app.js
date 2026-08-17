@@ -508,6 +508,8 @@ function updateCounts() {
   const count = state.cart.reduce((sum, item) => sum + item.quantity, 0);
   document.querySelector("#header-cart-count").textContent = count;
   document.querySelector("#mobile-cart-count").textContent = count;
+  const catalogCount = document.querySelector("#catalog-cart-count");
+  if (catalogCount) catalogCount.textContent = count;
 }
 
 let toastTimer;
