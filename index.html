@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#254e18">
+  <meta name="theme-color" content="#421707">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -25,32 +25,36 @@
   <a class="skip-link" href="#app">Skip to content</a>
 
   <div class="announcement">
-    <span>Complimentary delivery across Malaysia on orders over MYR 200</span>
-    <span class="announcement-extra">Secure checkout <i>•</i> 7-day easy returns</span>
+    <div class="container announcement-inner">
+      <span>Welcome to Divine Collection — Sacred beauty for every home</span>
+      <span class="announcement-extra"><button data-nav="tracking">Track order</button><i>•</i><button data-nav="contact">Help &amp; support</button></span>
+    </div>
   </div>
 
   <header class="site-header">
     <div class="container header-inner">
+      <button class="icon-button menu-toggle mobile-leading" type="button" id="menu-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
       <button class="brand" type="button" data-nav="home" aria-label="Divine Collection home">
-        <span class="brand-mark" aria-hidden="true">✦</span>
-        <span><strong>Divine Collection</strong><small>Premium Spiritual &amp; Decorative Products</small></span>
+        <span class="brand-mark" aria-hidden="true"><i></i></span>
+        <span><strong>DIVINE COLLECTION</strong><small>THE HOUSE OF SACRED CRAFT</small></span>
       </button>
 
-      <nav class="desktop-nav" aria-label="Primary navigation">
-        <button data-nav="home">Home</button>
-        <button data-nav="categories">Categories</button>
-        <button data-nav="shop">Shop</button>
-        <button data-nav="about">About</button>
-        <button data-nav="contact">Contact</button>
-      </nav>
+      <button class="header-search" type="button" data-nav="search" aria-label="Search Divine Collection">
+        <span>Search temples, divine décor and accessories…</span><small>All categories</small><b aria-hidden="true">⌕</b>
+      </button>
 
       <div class="header-actions">
-        <button class="install-app" type="button" data-install hidden><span aria-hidden="true">⇩</span><b>Install app</b></button>
-        <button class="search-pill" type="button" data-nav="search" aria-label="Search products"><span aria-hidden="true">⌕</span><b>Search divine pieces</b></button>
-        <button class="icon-button" type="button" data-nav="wishlist" aria-label="Wishlist">♡</button>
-        <button class="icon-button badge-button" type="button" data-nav="cart" aria-label="Shopping cart">▱<span id="header-cart-count">0</span></button>
-        <button class="icon-button" type="button" data-nav="profile" aria-label="Profile">○</button>
-        <button class="icon-button menu-toggle" type="button" id="menu-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+        <button class="install-app" type="button" data-install hidden><span aria-hidden="true">⇩</span><b>Install</b></button>
+        <button class="account-action" type="button" data-nav="profile" aria-label="Account"><span aria-hidden="true">○</span><b>Login / Account</b></button>
+        <button class="icon-button badge-button" type="button" data-nav="cart" aria-label="Shopping cart"><span class="cart-glyph" aria-hidden="true">▱</span><span id="header-cart-count">0</span></button>
+      </div>
+    </div>
+    <div class="catalog-nav">
+      <div class="container catalog-inner">
+        <button class="shop-all" data-nav="categories"><span>☰</span> SHOP BY CATEGORY</button>
+        <nav class="desktop-nav" aria-label="Primary navigation">
+          <button data-nav="home">Home</button><button data-category="Divine Home">Divine Home</button><button data-category="Temples">Temples</button><button data-category="Accessories">Accessories</button><button data-category="Lighting">Lighting</button><button data-nav="shop">All Products</button><button data-nav="about">Our Story</button><button class="sale-link" data-nav="shop">Special Offers</button>
+        </nav>
       </div>
     </div>
     <nav class="mobile-menu" id="mobile-menu" aria-label="Mobile menu">
@@ -69,7 +73,7 @@
   <footer class="site-footer" id="site-footer">
     <div class="container footer-grid">
       <div class="footer-brand">
-        <div class="brand brand-dark"><span class="brand-mark">✦</span><span><strong>Divine Collection</strong><small>Premium Spiritual &amp; Decorative Products</small></span></div>
+        <div class="brand brand-dark"><span class="brand-mark"><i></i></span><span><strong>DIVINE COLLECTION</strong><small>THE HOUSE OF SACRED CRAFT</small></span></div>
         <p>Premium spiritual and decorative pieces for peaceful, meaningful spaces.</p>
         <div class="socials"><button aria-label="Instagram">◎</button><button aria-label="Facebook">f</button><button aria-label="YouTube">▶</button></div>
       </div>
@@ -84,9 +88,9 @@
   <nav class="bottom-nav" id="bottom-nav" aria-label="Mobile navigation">
     <button data-nav="home"><span>⌂</span><small>Home</small></button>
     <button data-nav="categories"><span>▦</span><small>Categories</small></button>
-    <button data-nav="wishlist"><span>♡</span><small>Wishlist</small></button>
+    <button data-nav="search"><span>⌕</span><small>Search</small></button>
+    <button data-nav="profile"><span>○</span><small>Account</small></button>
     <button class="mobile-cart" data-nav="cart"><span>▱<b id="mobile-cart-count">0</b></span><small>Cart</small></button>
-    <button data-nav="profile"><span>○</span><small>Profile</small></button>
   </nav>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>

@@ -218,20 +218,22 @@ function trustSection() {
 }
 
 function renderHome() {
-  const hero = productById("lion-divine-home");
-  app.innerHTML = `<section class="hero"><div class="container hero-grid">
+  const hero = productById("3-fit-lion-divine");
+  app.innerHTML = `<section class="hero retail-hero"><div class="container hero-grid">
     <div class="hero-copy">
-      <span class="hero-kicker">✦ Curated spiritual craftsmanship</span>
-      <h1>Bring Divine Beauty <em>Into Your Space</em></h1>
-      <p>Discover premium spiritual, temple and decorative products crafted to create beautiful and peaceful spaces.</p>
-      <div class="button-row"><button class="btn primary large" data-nav="shop">Shop Collection →</button><button class="btn white large" data-nav="categories">Explore Categories</button></div>
-      <div class="hero-proof"><span>DC</span><span>✦</span><span>MY</span><p><strong>4.9 / 5</strong><small>Loved by spiritual homes across Malaysia</small></p></div>
+      <span class="hero-kicker">THE DIVINE HOME EDIT</span>
+      <h1>Sacred Beauty<br><em>For Every Home</em></h1>
+      <p>Premium temples, spiritual accessories and decorative pieces chosen to bring devotion, warmth and timeless grace into your space.</p>
+      <div class="button-row"><button class="btn primary large" data-nav="shop">SHOP NOW</button><button class="hero-text-link" data-nav="categories">Explore the collection <span>→</span></button></div>
+      <div class="hero-proof"><span>4.9</span><p><strong>Trusted by spiritual homes</strong><small>Premium quality • Secure delivery across Malaysia</small></p></div>
     </div>
-    <div class="hero-visual"><div class="hero-arch">${image(hero, "hero-image")}<div class="hero-tag"><span>Collector’s choice</span><strong>Lion Divine Home</strong><small>${money(hero.price)}</small></div></div><div class="floating-note note-one"><b>✓</b><span><strong>Premium quality</strong><small>Hand-finished details</small></span></div><div class="floating-note note-two"><b>♧</b><span><strong>Malaysia-wide</strong><small>Safe, secure delivery</small></span></div></div>
+    <div class="hero-visual"><div class="hero-halo"></div>${image(hero, "hero-image")}<div class="hero-tag"><span>Featured temple</span><strong>${hero.name}</strong><small>${money(hero.price)}</small></div><button class="hero-arrow" data-product="${hero.id}" aria-label="View featured product">→</button></div>
+    <div class="hero-dots" aria-hidden="true"><i class="active"></i><i></i><i></i></div>
   </div></section>
-  <section class="section"><div class="container">${sectionHeading("Find your piece", "Shop by category", "Meaningful décor for every sacred corner.", "View all categories", "categories")}<div class="category-grid">${CATEGORIES.map(([name, , id]) => `<button class="category-card" data-category="${name}">${image(productById(id))}<span><small>Explore</small><strong>${name}</strong><b>→</b></span></button>`).join("")}</div></div></section>
-  <section class="section featured"><div class="container">${sectionHeading("Divine essentials", "Featured collection", "Six signature pieces, chosen for craftsmanship, presence and purpose.", "Shop all products", "shop")}<div class="product-grid">${state.catalog.map(product => card(product)).join("")}</div></div></section>
-  <section class="section promos"><div class="container promo-grid"><article class="promo-main"><span class="eyebrow light">The signature edit</span><h2>Crafted for Divine Spaces</h2><p>Premium traditional pieces that bring devotion, warmth and quiet grandeur home.</p><button class="btn white" data-nav="shop">Discover the collection →</button>${image(productById("3-fit-lion-divine"))}</article><article class="promo-small"><span>✦</span><p><small>Premium Spiritual Collection</small><strong>Timeless details. Sacred meaning.</strong></p></article><article class="promo-small gold"><span>♧</span><p><small>Bring Tradition Home</small><strong>Gifts with lasting significance.</strong></p></article></div></section>${trustSection()}`;
+  ${trustSection()}
+  <section class="section home-categories"><div class="container">${sectionHeading("Curated with purpose", "Shop by category", "Explore signature pieces for prayer, décor and meaningful gifting.", "View all", "categories")}<div class="category-grid">${CATEGORIES.map(([name, , id]) => `<button class="category-card" data-category="${name}">${image(productById(id))}<span><strong>${name}</strong><small>Explore collection</small></span></button>`).join("")}</div></div></section>
+  <section class="section featured"><div class="container">${sectionHeading("Customer favourites", "Best sellers", "Our most-loved sacred pieces, available in their original finishes.", "View all products", "shop")}<div class="product-grid home-products">${state.catalog.map(product => card(product)).join("")}</div></div></section>
+  <section class="section promos"><div class="container"><article class="promo-main"><div class="promo-copy"><span class="eyebrow light">EXCLUSIVE DIVINE EDIT</span><h2>Sacred Spaces,<br>Beautifully Made</h2><p>Discover statement temples and devotional décor selected for enduring beauty.</p><button class="btn promo-button" data-nav="shop">EXPLORE COLLECTION</button></div>${image(productById("lion-golden-temple"))}<span class="promo-seal">PREMIUM<br>COLLECTION</span></article></div></section>`;
 }
 
 function renderCategories() {

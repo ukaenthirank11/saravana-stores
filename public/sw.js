@@ -1,4 +1,4 @@
-const CACHE_NAME = "divine-collection-v4";
+const CACHE_NAME = "divine-collection-v5";
 const APP_SHELL = [
   "/",
   "/index.html",
