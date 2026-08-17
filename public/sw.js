@@ -1,4 +1,4 @@
-const CACHE_NAME = "divine-collection-v6";
+const CACHE_NAME = "divine-collection-v7";
 const APP_SHELL = [
   "/",
   "/index.html",
@@ -34,6 +34,21 @@ self.addEventListener("fetch", event => {
           return response;
         })
         .catch(() => caches.match("/index.html"))
+    );
+    return;
+  }
+
+  if (url.pathname.startsWith("/products/")) {
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+          if (response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
+          }
+          return response;
+        })
+        .catch(() => caches.match(request))
     );
     return;
   }

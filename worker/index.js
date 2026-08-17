@@ -20,7 +20,15 @@ export default {
     }
 
     const asset = await env.ASSETS.fetch(request);
-    if (asset.status !== 404 || !["GET", "HEAD"].includes(request.method)) return asset;
+    if (asset.status !== 404 || !["GET", "HEAD"].includes(request.method)) {
+      if (asset.ok && url.pathname.startsWith("/products/") && url.pathname.endsWith(".webp")) {
+        const headers = new Headers(asset.headers);
+        headers.set("Content-Type", "image/webp");
+        headers.set("Cache-Control", "public, max-age=31536000, immutable");
+        return new Response(asset.body, { status: asset.status, statusText: asset.statusText, headers });
+      }
+      return asset;
+    }
 
     const fallback = new Request(new URL("/index.html", request.url), request);
     return env.ASSETS.fetch(fallback);

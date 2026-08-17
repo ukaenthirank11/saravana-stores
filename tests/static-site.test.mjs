@@ -42,6 +42,14 @@ test("build output contains the static site, product photography and Cloudflare 
   const response = await worker.default.fetch(new Request("https://example.test/api/health"), { ASSETS: { fetch: () => new Response("Not found", { status: 404 }) } });
   assert.equal(response.status, 503);
   assert.equal((await response.json()).stack, "HTML, CSS, JavaScript + FastAPI");
+
+  const imageResponse = await worker.default.fetch(
+    new Request("https://example.test/products/brass-lotus-multi-diya-urli-stand.webp"),
+    { ASSETS: { fetch: () => new Response(new Uint8Array([1, 2, 3]), { headers: { "Content-Type": "application/octet-stream" } }) } }
+  );
+  assert.equal(imageResponse.status, 200);
+  assert.equal(imageResponse.headers.get("Content-Type"), "image/webp");
+  assert.match(imageResponse.headers.get("Cache-Control"), /immutable/);
 });
 
 test("maps every supplied source photograph to a storefront product", async () => {
@@ -60,4 +68,16 @@ test("maps every supplied source photograph to a storefront product", async () =
     assert.match(js, new RegExp(item.product_id));
     assert.match(js, new RegExp(item.public_asset.replaceAll("/", "\\/")));
   }
+});
+
+test("publishes product photos with image headers and a fresh offline cache", async () => {
+  const [headers, serviceWorker] = await Promise.all([
+    readFile(new URL("public/_headers", root), "utf8"),
+    readFile(new URL("public/sw.js", root), "utf8")
+  ]);
+
+  assert.match(headers, /\/products\/\*/);
+  assert.match(headers, /Content-Type: image\/webp/);
+  assert.match(serviceWorker, /divine-collection-v7/);
+  assert.match(serviceWorker, /url\.pathname\.startsWith\("\/products\/"\)/);
 });
