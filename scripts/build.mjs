@@ -12,21 +12,21 @@ for (const file of ["index.html", "styles.css", "app.js"]) {
   await cp(resolve(root, file), resolve(client, file));
 }
 
-await cp(resolve(root, "public"), client, { recursive: true });
+await cp(resolve(root, "public"), resolve(client, "public"), { recursive: true });
 const productImageMap = JSON.parse(await readFile(resolve(root, "assets", "Products", "product-image-map.json"), "utf8"));
-await mkdir(resolve(client, "products"), { recursive: true });
+await mkdir(resolve(client, "public", "products"), { recursive: true });
 for (const item of productImageMap) {
-  await cp(resolve(root, "assets", "Products", item.source), resolve(client, "products", `${item.product_id}.png`));
+  await cp(resolve(root, "assets", "Products", item.source), resolve(client, "public", "products", `${item.product_id}.png`));
 }
 
 const indexPath = resolve(client, "index.html");
 let html = await readFile(indexPath, "utf8");
-if (!html.includes("Saravana Stores") || !html.includes("/app.js") || !html.includes("/styles.css") || !html.includes("/manifest.webmanifest")) {
+if (!html.includes("Saravana Stores") || !html.includes("app.js") || !html.includes("styles.css") || !html.includes("public/manifest.webmanifest")) {
   throw new Error("Static storefront build is incomplete.");
 }
 html = html
-  .replace('href="/styles.css"', 'href="/styles.css?v=original-png-v1"')
-  .replace('src="/app.js"', 'src="/app.js?v=original-png-v1"');
+  .replace('href="styles.css"', 'href="styles.css?v=original-png-v1"')
+  .replace('src="app.js"', 'src="app.js?v=original-png-v1"');
 await writeFile(indexPath, html);
 
 await writeFile(resolve(dist, "BUILD_COMPLETE"), "Saravana Stores standalone HTML/CSS/JS build\n");

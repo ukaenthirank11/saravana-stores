@@ -13,8 +13,8 @@ test("uses a framework-free 24-product storefront", async () => {
   ]);
 
   assert.match(html, /<!doctype html>/i);
-  assert.match(html, /<link rel="stylesheet" href="\/styles\.css">/);
-  assert.match(html, /<script src="\/app\.js" defer><\/script>/);
+  assert.match(html, /<link rel="stylesheet" href="styles\.css">/);
+  assert.match(html, /<script src="app\.js" defer><\/script>/);
   assert.match(html, /manifest\.webmanifest/);
   assert.match(css, /\.product-card/);
   assert.match(js, /Brass Lotus Multi Diya Urli Stand/);
@@ -47,11 +47,11 @@ test("build output contains all 24 supplied product photographs", async () => {
     "dist/client/index.html",
     "dist/client/styles.css",
     "dist/client/app.js",
-    "dist/client/manifest.webmanifest",
-    "dist/client/sw.js",
-    "dist/client/products/brass-lotus-multi-diya-urli-stand.png",
-    "dist/client/products/brass-lord-ganesha-idol.png",
-    "dist/client/products/lord-shiva-meditation-statue.png"
+    "dist/client/public/manifest.webmanifest",
+    "dist/client/public/sw.js",
+    "dist/client/public/products/brass-lotus-multi-diya-urli-stand.png",
+    "dist/client/public/products/brass-lord-ganesha-idol.png",
+    "dist/client/public/products/lord-shiva-meditation-statue.png"
   ]) {
     await access(new URL(path, root));
   }
@@ -59,7 +59,7 @@ test("build output contains all 24 supplied product photographs", async () => {
   const builtHtml = await readFile(new URL("dist/client/index.html", root), "utf8");
   assert.match(builtHtml, /styles\.css\?v=original-png-v1/);
   assert.match(builtHtml, /app\.js\?v=original-png-v1/);
-  const productImage = await readFile(new URL("dist/client/products/brass-lotus-multi-diya-urli-stand.png", root));
+  const productImage = await readFile(new URL("dist/client/public/products/brass-lotus-multi-diya-urli-stand.png", root));
   assert.deepEqual([...productImage.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
 });
 
@@ -83,6 +83,6 @@ test("maps each numbered source photograph to one storefront product", async () 
 
 test("uses a fresh offline cache for product photos", async () => {
   const serviceWorker = await readFile(new URL("public/sw.js", root), "utf8");
-  assert.match(serviceWorker, /divine-collection-v9/);
+  assert.match(serviceWorker, /saravana-stores-v11/);
   assert.match(serviceWorker, /url\.pathname\.startsWith\("\/products\/"\)/);
 });

@@ -797,7 +797,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .hero-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(73,32,10,.26); }
 .hero-dots i.active { width: 18px; border-radius: 5px; background: #5a240c; }
 
-.retail-hero.sacred-hero { border-bottom-color: #3d0409; background: #220205 url("/public/hero-red-background.png") center center / cover no-repeat; }
+.retail-hero.sacred-hero { border-bottom-color: #3d0409; background: #220205 url("public/hero-red-background.png") center center / cover no-repeat; }
 .retail-hero.sacred-hero::before { display: none; }
 .retail-hero.sacred-hero .hero-grid { min-height: 690px; grid-template-columns: 1fr; gap: 0; }
 .retail-hero.sacred-hero .hero-copy { width: min(560px, 52%); padding: 92px 0 92px 76px; }

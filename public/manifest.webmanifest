@@ -2,15 +2,15 @@
   "name": "Saravana Stores",
   "short_name": "Saravana",
   "description": "Premium spiritual, temple and decorative products for meaningful Indian spaces.",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "../",
+  "scope": "../",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#fffaf2",
   "theme_color": "#421707",
   "shortcuts": [
-    { "name": "Shop collection", "short_name": "Shop", "url": "/shop" },
-    { "name": "My cart", "short_name": "Cart", "url": "/cart" },
-    { "name": "Track order", "short_name": "Track", "url": "/order-tracking" }
+    { "name": "Shop collection", "short_name": "Shop", "url": "../shop" },
+    { "name": "My cart", "short_name": "Cart", "url": "../cart" },
+    { "name": "Track order", "short_name": "Track", "url": "../order-tracking" }
   ]
 }

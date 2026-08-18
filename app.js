@@ -1,5 +1,6 @@
 const PRODUCT_DEFAULTS = { stock: 24, currency: "INR", rating: 4.8, reviews: 24, imageOrientation: "portrait" };
-const product = data => ({ ...PRODUCT_DEFAULTS, ...data, image: `/public/products/${data.id}.png` });
+const PUBLIC_ASSET_ROOT = "public";
+const product = data => ({ ...PRODUCT_DEFAULTS, ...data, image: `${PUBLIC_ASSET_ROOT}/products/${data.id}.png` });
 
 const PRODUCTS = [
   product({
@@ -164,13 +165,16 @@ const CATEGORIES = [
   ["Divine Idols", 6, "goddess-lakshmi-idol"]
 ];
 
-const PATHS = {
+const SITE_BASE_PATH = location.hostname.endsWith(".github.io") ? `/${location.pathname.split("/").filter(Boolean)[0] || ""}` : "";
+const sitePath = path => `${SITE_BASE_PATH}${path}`;
+const ROUTES = {
   home: "/", categories: "/categories", shop: "/shop", search: "/search",
   wishlist: "/wishlist", cart: "/cart", checkout: "/checkout", success: "/order-success",
   tracking: "/order-tracking", profile: "/profile", orders: "/my-orders", about: "/about",
   contact: "/contact", faq: "/faq", privacy: "/privacy-policy", terms: "/terms-and-conditions",
   returns: "/return-and-refund-policy", login: "/login", register: "/register", admin: "/admin"
 };
+const PATHS = Object.fromEntries(Object.entries(ROUTES).map(([page, path]) => [page, sitePath(path)]));
 
 const app = document.querySelector("#app");
 const toast = document.querySelector("#toast");
@@ -235,6 +239,13 @@ function productById(id) {
 
 function image(product, className = "") {
   return `<img class="product-image product-photo ${product.imageOrientation} ${className}" data-product-image="${product.id}" src="${product.image}" alt="${product.name}" loading="lazy" decoding="async">`;
+}
+
+function normalizePublicAssetPaths() {
+  document.querySelectorAll('[src^="/public/"]').forEach(element => {
+    const source = element.getAttribute("src");
+    element.setAttribute("src", `${PUBLIC_ASSET_ROOT}/${source.slice("/public/".length)}`);
+  });
 }
 
 function stars(product) {
@@ -572,15 +583,18 @@ function adminSimple() {
 }
 
 function routeFromLocation() {
-  const parts = location.pathname.split("/").filter(Boolean);
+  const localPath = SITE_BASE_PATH && location.pathname.startsWith(SITE_BASE_PATH)
+    ? location.pathname.slice(SITE_BASE_PATH.length) || "/"
+    : location.pathname;
+  const parts = localPath.split("/").filter(Boolean);
   if (!parts.length) return ["home"];
   if (parts[0] === "product") return ["product", parts[1]];
-  const page = Object.keys(PATHS).find(key => PATHS[key].slice(1) === parts[0]);
+  const page = Object.keys(ROUTES).find(key => ROUTES[key].slice(1) === parts[0]);
   return [page || "home"];
 }
 
 function go(page, id = "") {
-  const path = page === "product" ? `/product/${id}` : PATHS[page] || "/";
+  const path = page === "product" ? sitePath(`/product/${id}`) : PATHS[page] || sitePath("/");
   history.pushState({}, "", path);
   menu.classList.remove("open");
   menuToggle.setAttribute("aria-expanded", "false");
@@ -603,6 +617,7 @@ function render() {
     login: () => renderAuth("login"), register: () => renderAuth("register"), admin: renderAdmin
   };
   (renderers[page] || renderHome)();
+  normalizePublicAssetPaths();
   updateCounts();
 }
 
@@ -821,7 +836,7 @@ window.addEventListener("online", () => { updateNetworkState(); detectPaymentRun
 window.addEventListener("offline", updateNetworkState);
 
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));
+  window.addEventListener("load", () => navigator.serviceWorker.register("public/sw.js").catch(() => {}));
 }
 
 render();
@@ -830,4 +845,3 @@ detectPaymentRuntime();
 if (routeFromLocation()[0] === "checkout" && new URLSearchParams(location.search).get("payment") === "cancelled") {
   notify("Payment was cancelled — your cart is still saved");
 }
-
