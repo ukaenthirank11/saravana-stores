@@ -16,10 +16,22 @@ if database_file.exists():
     database_file.unlink()
 os.environ["DATABASE_PATH"] = str(database_file)
 os.environ["PAYMENT_MODE"] = "demo"
-os.environ["FRONTEND_URL"] = "http://localhost:3000"
+os.environ["FRONTEND_URL"] = "http://localhost:3001"
 
 from fastapi.testclient import TestClient  # noqa: E402
-from app.main import app  # noqa: E402
+from app.main import PRODUCTS, app  # noqa: E402
+
+
+CUSTOMER = {
+    "full_name": "Ananya Raman",
+    "email": "ananya@example.in",
+    "phone": "+91 98765 43210",
+    "address": "18 Temple Garden Road",
+    "city": "Chennai",
+    "state": "Tamil Nadu",
+    "postal_code": "600004",
+    "country": "India",
+}
 
 
 class CommerceApiTests(unittest.TestCase):
@@ -30,126 +42,64 @@ class CommerceApiTests(unittest.TestCase):
     def tearDown(self) -> None:
         self.client_context.__exit__(None, None, None)
 
-    def test_health_and_catalogue(self) -> None:
+    def test_health_and_exact_24_product_catalogue(self) -> None:
         health = self.client.get("/api/health")
         self.assertEqual(health.status_code, 200)
         self.assertEqual(health.json()["payment_mode"], "demo")
         self.assertTrue(health.json()["ok"])
 
-        products = self.client.get("/api/products")
-        self.assertEqual(products.status_code, 200)
-        self.assertEqual(products.json()["currency"], "MIXED")
-        catalogue = products.json()["products"]
-        self.assertEqual(len(catalogue), 33)
-        ganesha_lamp = next(product for product in catalogue if product["id"] == "ganesha-stone-lamp")
-        self.assertEqual(ganesha_lamp["price"], "1250.00")
-        self.assertEqual(ganesha_lamp["currency"], "MYR")
-        self.assertEqual(ganesha_lamp["stock"], 58)
-        brass_urli = next(product for product in catalogue if product["id"] == "brass-lotus-multi-diya-urli-stand")
-        self.assertEqual(brass_urli["price"], "8999.00")
-        self.assertEqual(brass_urli["currency"], "INR")
+        response = self.client.get("/api/products")
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["currency"], "INR")
+        catalogue = payload["products"]
+        self.assertEqual(len(catalogue), 24)
+        self.assertEqual({item["id"] for item in catalogue}, set(PRODUCTS))
+        self.assertTrue(all(item["currency"] == "INR" for item in catalogue))
+
+        urli = next(item for item in catalogue if item["id"] == "brass-lotus-multi-diya-urli-stand")
+        self.assertEqual(urli["price"], "8999.00")
+        ganesha = next(item for item in catalogue if item["id"] == "brass-lord-ganesha-idol")
+        self.assertEqual(ganesha["price"], "2299.00")
 
     def test_demo_checkout_uses_server_prices_and_persists_order(self) -> None:
         response = self.client.post(
             "/api/checkout/session",
             json={
                 "items": [
-                    {"product_id": "3-fit-lion-divine", "quantity": 1},
-                    {"product_id": "standed-steel-accessories", "quantity": 1},
-                    {"product_id": "ganesha-stone-lamp", "quantity": 1},
+                    {"product_id": "brass-lotus-multi-diya-urli-stand", "quantity": 1},
+                    {"product_id": "decorative-brass-aarti-spoon", "quantity": 1},
+                    {"product_id": "brass-lord-ganesha-idol", "quantity": 1},
                 ],
                 "delivery": "standard",
                 "promo_code": "DIVINE8",
-                "customer": {
-                    "full_name": "Aishah Rahman",
-                    "email": "aishah@example.my",
-                    "phone": "+60 12-345 6789",
-                    "address": "18 Jalan Damai Perdana 3",
-                    "city": "Kuala Lumpur",
-                    "state": "Kuala Lumpur",
-                    "postal_code": "56000",
-                    "country": "Malaysia",
-                },
+                "customer": CUSTOMER,
             },
         )
         self.assertEqual(response.status_code, 200, response.text)
         checkout = response.json()
         self.assertEqual(checkout["mode"], "demo")
-        self.assertEqual(checkout["total_myr"], "3202.00")
+        self.assertEqual(checkout["currency"], "INR")
+        self.assertEqual(checkout["total"], "11796.00")
+        self.assertIsNone(checkout["total_myr"])
         self.assertIn("order-success", checkout["checkout_url"])
 
         order = self.client.get(f"/api/orders/{checkout['order_id']}")
         self.assertEqual(order.status_code, 200)
         self.assertEqual(order.json()["status"], "paid_demo")
-        self.assertEqual(order.json()["total_myr"], "3202.00")
+        self.assertEqual(order.json()["total"], "11796.00")
 
-    def test_inr_product_checkout_uses_rupee_pricing(self) -> None:
-        response = self.client.post(
-            "/api/checkout/session",
-            json={
-                "items": [{"product_id": "brass-lotus-multi-diya-urli-stand", "quantity": 1}],
-                "delivery": "standard",
-                "customer": {
-                    "full_name": "Aishah Rahman",
-                    "email": "aishah@example.my",
-                    "phone": "+60 12-345 6789",
-                    "address": "18 Jalan Damai Perdana 3",
-                    "city": "Kuala Lumpur",
-                    "state": "Kuala Lumpur",
-                    "postal_code": "56000",
-                    "country": "Malaysia",
+    def test_removed_and_unknown_products_are_rejected(self) -> None:
+        for product_id in ("3-fit-lion-divine", "invented-product"):
+            response = self.client.post(
+                "/api/checkout/session",
+                json={
+                    "items": [{"product_id": product_id, "quantity": 1}],
+                    "delivery": "economy",
+                    "customer": CUSTOMER,
                 },
-            },
-        )
-        self.assertEqual(response.status_code, 200, response.text)
-        checkout = response.json()
-        self.assertEqual(checkout["currency"], "INR")
-        self.assertEqual(checkout["total"], "9098.00")
-        self.assertIsNone(checkout["total_myr"])
-
-    def test_mixed_currency_cart_is_rejected(self) -> None:
-        response = self.client.post(
-            "/api/checkout/session",
-            json={
-                "items": [
-                    {"product_id": "3-fit-lion-divine", "quantity": 1},
-                    {"product_id": "antique-brass-temple-bell", "quantity": 1},
-                ],
-                "delivery": "economy",
-                "customer": {
-                    "full_name": "Aishah Rahman",
-                    "email": "aishah@example.my",
-                    "phone": "+60 12-345 6789",
-                    "address": "18 Jalan Damai Perdana 3",
-                    "city": "Kuala Lumpur",
-                    "state": "Kuala Lumpur",
-                    "postal_code": "56000",
-                    "country": "Malaysia",
-                },
-            },
-        )
-        self.assertEqual(response.status_code, 400)
-        self.assertIn("one currency", response.json()["detail"])
-
-    def test_unknown_products_are_rejected(self) -> None:
-        response = self.client.post(
-            "/api/checkout/session",
-            json={
-                "items": [{"product_id": "invented-product", "quantity": 1}],
-                "delivery": "economy",
-                "customer": {
-                    "full_name": "Aishah Rahman",
-                    "email": "aishah@example.my",
-                    "phone": "+60 12-345 6789",
-                    "address": "18 Jalan Damai Perdana 3",
-                    "city": "Kuala Lumpur",
-                    "state": "Kuala Lumpur",
-                    "postal_code": "56000",
-                    "country": "Malaysia",
-                },
-            },
-        )
-        self.assertEqual(response.status_code, 400)
+            )
+            self.assertEqual(response.status_code, 400)
 
     def test_live_mode_refuses_checkout_without_a_stripe_key(self) -> None:
         os.environ["PAYMENT_MODE"] = "stripe"
@@ -158,18 +108,9 @@ class CommerceApiTests(unittest.TestCase):
             response = self.client.post(
                 "/api/checkout/session",
                 json={
-                    "items": [{"product_id": "lion-golden-temple", "quantity": 1}],
+                    "items": [{"product_id": "brass-lotus-deepam-set-of-3", "quantity": 1}],
                     "delivery": "economy",
-                    "customer": {
-                        "full_name": "Aishah Rahman",
-                        "email": "aishah@example.my",
-                        "phone": "+60 12-345 6789",
-                        "address": "18 Jalan Damai Perdana 3",
-                        "city": "Kuala Lumpur",
-                        "state": "Kuala Lumpur",
-                        "postal_code": "56000",
-                        "country": "Malaysia",
-                    },
+                    "customer": CUSTOMER,
                 },
             )
             self.assertEqual(response.status_code, 503)

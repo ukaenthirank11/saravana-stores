@@ -1,1 +1,1 @@
-"""Divine Collection FastAPI application package."""
+"""Saravana Stores FastAPI application package."""

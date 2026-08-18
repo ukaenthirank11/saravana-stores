@@ -31,40 +31,36 @@ load_local_environment()
 
 
 PRODUCTS = {
-    "3-fit-lion-divine": {"name": "3 FIT LION DIVINE", "price_sen": 185_000, "stock": 100},
-    "golden-black-3-fit-divine": {"name": "GOLDEN BLACK 3 FIT DIVINE", "price_sen": 220_000, "stock": 100},
-    "lion-divine-home": {"name": "LION DIVINE HOME", "price_sen": 300_000, "stock": 200},
-    "standed-steel-accessories": {"name": "STANDED STEEL ACCESSORIES", "price_sen": 19_000, "stock": 30},
-    "usb-stone-lighting": {"name": "USB STONE LIGHTING", "price_sen": 150_000, "stock": 100},
-    "lion-golden-temple": {"name": "LION GOLDEN TEMPLE", "price_sen": 150_000, "stock": 100},
-    "sacred-arch-home-temple": {"name": "SACRED ARCH HOME TEMPLE", "price_sen": 128_000, "stock": 85},
-    "royal-lion-prayer-cabinet": {"name": "ROYAL LION PRAYER CABINET", "price_sen": 275_000, "stock": 42},
-    "peacock-arch-home-shrine": {"name": "PEACOCK ARCH HOME SHRINE", "price_sen": 235_000, "stock": 64},
-    "wall-mounted-divine-altar": {"name": "WALL MOUNTED DIVINE ALTAR", "price_sen": 98_000, "stock": 110},
-    "heritage-gopuram-temple": {"name": "HERITAGE GOPURAM TEMPLE", "price_sen": 245_000, "stock": 38},
-    "compact-prayer-mandir": {"name": "COMPACT PRAYER MANDIR", "price_sen": 89_000, "stock": 120},
-    "golden-pillar-temple": {"name": "GOLDEN PILLAR TEMPLE", "price_sen": 175_000, "stock": 70},
-    "outdoor-devotion-shrine": {"name": "OUTDOOR DEVOTION SHRINE", "price_sen": 210_000, "stock": 31},
-    "classic-pooja-cabinet": {"name": "CLASSIC POOJA CABINET", "price_sen": 265_000, "stock": 48},
-    "temple-bell-set": {"name": "TEMPLE BELL SET", "price_sen": 24_000, "stock": 150},
-    "stainless-pooja-thali": {"name": "STAINLESS POOJA THALI", "price_sen": 32_000, "stock": 135},
-    "trishul-accessory-stand": {"name": "TRISHUL ACCESSORY STAND", "price_sen": 29_000, "stock": 74},
-    "brass-diya-pair": {"name": "BRASS DIYA PAIR", "price_sen": 18_000, "stock": 180},
-    "lotus-incense-holder": {"name": "LOTUS INCENSE HOLDER", "price_sen": 12_000, "stock": 210},
-    "kumkum-storage-box": {"name": "KUMKUM STORAGE BOX", "price_sen": 16_000, "stock": 160},
-    "led-sacred-backlight": {"name": "LED SACRED BACKLIGHT", "price_sen": 78_000, "stock": 95},
-    "usb-om-arch-light": {"name": "USB OM ARCH LIGHT", "price_sen": 52_000, "stock": 125},
-    "warm-temple-strip-light": {"name": "WARM TEMPLE STRIP LIGHT", "price_sen": 36_000, "stock": 140},
-    "ganesha-stone-lamp": {"name": "GANESHA STONE LAMP", "price_sen": 125_000, "stock": 58},
     "brass-lotus-multi-diya-urli-stand": {"name": "Brass Lotus Multi Diya Urli Stand", "price_sen": 899_900, "stock": 24, "currency": "inr"},
-    "brass-lotus-deepam-set-of-3": {"name": "Brass Lotus Deepam (Set of 3)", "price_sen": 249_900, "stock": 60, "currency": "inr"},
-    "silver-kumkum-haldi-bowls-set-of-2": {"name": "Silver Finish Kumkum & Haldi Bowls (Set of 2)", "price_sen": 129_900, "stock": 45, "currency": "inr"},
-    "brass-lotus-urli-bowl": {"name": "Brass Lotus Urli Bowl", "price_sen": 329_900, "stock": 32, "currency": "inr"},
-    "wooden-dhoop-burner-box": {"name": "Wooden Dhoop Burner Box", "price_sen": 219_900, "stock": 37, "currency": "inr"},
-    "wooden-temple-diya-stand": {"name": "Wooden Temple Diya Stand", "price_sen": 549_900, "stock": 18, "currency": "inr"},
-    "decorative-brass-aarti-spoon": {"name": "Decorative Brass Aarti Spoon", "price_sen": 89_900, "stock": 75, "currency": "inr"},
-    "antique-brass-temple-bell": {"name": "Antique Brass Temple Bell", "price_sen": 159_900, "stock": 48, "currency": "inr"},
+    "brass-lotus-deepam-set-of-3": {"name": "Brass Lotus Deepam (Set of 3)", "price_sen": 249_900, "stock": 24, "currency": "inr"},
+    "silver-finish-kumkum-haldi-bowls-set-of-2": {"name": "Silver Finish Kumkum & Haldi Bowls (Set of 2)", "price_sen": 129_900, "stock": 24, "currency": "inr"},
+    "brass-lotus-urli-bowl": {"name": "Brass Lotus Urli Bowl", "price_sen": 329_900, "stock": 24, "currency": "inr"},
+    "wooden-dhoop-burner-box": {"name": "Wooden Dhoop Burner Box", "price_sen": 219_900, "stock": 24, "currency": "inr"},
+    "wooden-temple-diya-stand": {"name": "Wooden Temple Diya Stand", "price_sen": 549_900, "stock": 24, "currency": "inr"},
+    "decorative-brass-aarti-spoon": {"name": "Decorative Brass Aarti Spoon", "price_sen": 89_900, "stock": 24, "currency": "inr"},
+    "antique-brass-temple-bell": {"name": "Antique Brass Temple Bell", "price_sen": 159_900, "stock": 24, "currency": "inr"},
+    "antique-hanging-door-decor-pair": {"name": "Antique Hanging Door Decor (Pair)", "price_sen": 149_900, "stock": 24, "currency": "inr"},
+    "mahalakshmi-decorative-wall-plate": {"name": "Mahalakshmi Decorative Wall Plate", "price_sen": 199_900, "stock": 24, "currency": "inr"},
+    "wooden-temple-mini-mandir": {"name": "Wooden Temple (Mini Mandir)", "price_sen": 229_900, "stock": 24, "currency": "inr"},
+    "goddess-lakshmi-idol": {"name": "Goddess Lakshmi Idol", "price_sen": 349_900, "stock": 24, "currency": "inr"},
+    "lord-shiva-meditation-statue": {"name": "Lord Shiva Meditation Statue", "price_sen": 329_900, "stock": 24, "currency": "inr"},
+    "silver-finish-kalash": {"name": "Silver Finish Kalash", "price_sen": 179_900, "stock": 24, "currency": "inr"},
+    "elephant-oil-lamp-stand-set-of-2": {"name": "Elephant Oil Lamp Stand (Set of 2)", "price_sen": 249_900, "stock": 24, "currency": "inr"},
+    "luxury-glass-bottle-tumbler-set": {"name": "Luxury Glass Bottle & Tumbler Set", "price_sen": 279_900, "stock": 24, "currency": "inr"},
+    "traditional-brass-pooja-thali-set": {"name": "Traditional Brass Pooja Thali Set", "price_sen": 299_900, "stock": 24, "currency": "inr"},
+    "brass-incense-stick-holder-with-cover": {"name": "Brass Incense Stick Holder with Cover", "price_sen": 69_900, "stock": 24, "currency": "inr"},
+    "handcrafted-wooden-krishna-jhula": {"name": "Handcrafted Wooden Krishna Jhula", "price_sen": 249_900, "stock": 24, "currency": "inr"},
+    "traditional-wooden-decorative-horse": {"name": "Traditional Wooden Decorative Horse", "price_sen": 129_900, "stock": 24, "currency": "inr"},
+    "kamadhenu-cow-with-calf-statue": {"name": "Kamadhenu Cow with Calf Statue", "price_sen": 179_900, "stock": 24, "currency": "inr"},
+    "brass-lord-murugan-statue": {"name": "Brass Lord Murugan Statue", "price_sen": 299_900, "stock": 24, "currency": "inr"},
+    "black-lord-vishnu-idol": {"name": "Black Lord Vishnu Idol", "price_sen": 189_900, "stock": 24, "currency": "inr"},
+    "brass-lord-ganesha-idol": {"name": "Brass Lord Ganesha Idol", "price_sen": 229_900, "stock": 24, "currency": "inr"},
 }
+
+CATALOG_PRODUCT_IDS = tuple(PRODUCTS)
+
+if len(PRODUCTS) != 24:
+    raise RuntimeError("The commerce catalogue must contain exactly 24 products.")
 
 DELIVERY_FEES = {
     "myr": {"economy": 0, "standard": 1_200, "express": 3_500},
@@ -87,7 +83,7 @@ class ShippingAddress(BaseModel):
     city: str = Field(min_length=2, max_length=80)
     state: str = Field(min_length=2, max_length=80)
     postal_code: str = Field(min_length=4, max_length=12)
-    country: str = Field(default="Malaysia", min_length=2, max_length=80)
+    country: str = Field(default="India", min_length=2, max_length=80)
 
 
 class CheckoutRequest(BaseModel):
@@ -261,21 +257,21 @@ def frontend_url(request: Request) -> str:
     if configured:
         return configured
     origin = request.headers.get("origin", "").strip().rstrip("/")
-    allowed = env_list("ALLOWED_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000")
+    allowed = env_list("ALLOWED_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001,http://127.0.0.1:3001")
     if origin in allowed:
         return origin
     return str(request.base_url).rstrip("/")
 
 
 app = FastAPI(
-    title="Divine Collection Commerce API",
-    description="Server-validated catalogue, order and Stripe Checkout API for Divine Collection.",
+    title="Saravana Stores Commerce API",
+    description="Server-validated catalogue, order and Stripe Checkout API for Saravana Stores.",
     version="1.0.0",
 )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=env_list("ALLOWED_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000"),
+    allow_origins=env_list("ALLOWED_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001,http://127.0.0.1:3001"),
     allow_credentials=False,
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Content-Type", "Stripe-Signature"],
@@ -294,7 +290,7 @@ def health() -> dict:
     status = "ready" if requested_mode == "demo" or stripe_ready else "needs_configuration"
     return {
         "ok": status == "ready",
-        "service": "Divine Collection Commerce API",
+        "service": "Saravana Stores Commerce API",
         "version": app.version,
         "payment_mode": requested_mode,
         "stripe_ready": stripe_ready,
@@ -305,7 +301,7 @@ def health() -> dict:
 @app.get("/api/products")
 def products() -> dict:
     return {
-        "currency": "MIXED",
+        "currency": "INR",
         "products": [
             {
                 "id": product_id,
@@ -343,7 +339,7 @@ def checkout_session(payload: CheckoutRequest, request: Request) -> CheckoutResp
                         "price_data": {
                             "currency": currency,
                             "product_data": {
-                                "name": f"Divine Collection order {order_id}",
+                                "name": f"Saravana Stores order {order_id}",
                                 "description": f"{sum(item['quantity'] for item in items)} curated piece(s), including delivery",
                             },
                             "unit_amount": total,

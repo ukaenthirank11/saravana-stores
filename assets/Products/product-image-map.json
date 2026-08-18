@@ -1,42 +1,26 @@
 [
-  {
-    "source": "ChatGPT Image Aug 17, 2026, 04_32_22 PM.png",
-    "product_id": "brass-lotus-multi-diya-urli-stand",
-    "public_asset": "/products/brass-lotus-multi-diya-urli-stand.png"
-  },
-  {
-    "source": "ChatGPT Image Aug 17, 2026, 04_32_20 PM.png",
-    "product_id": "brass-lotus-deepam-set-of-3",
-    "public_asset": "/products/brass-lotus-deepam-set-of-3.png"
-  },
-  {
-    "source": "ChatGPT Image Aug 17, 2026, 04_32_19 PM.png",
-    "product_id": "silver-kumkum-haldi-bowls-set-of-2",
-    "public_asset": "/products/silver-kumkum-haldi-bowls-set-of-2.png"
-  },
-  {
-    "source": "ChatGPT Image Aug 17, 2026, 04_32_18 PM.png",
-    "product_id": "brass-lotus-urli-bowl",
-    "public_asset": "/products/brass-lotus-urli-bowl.png"
-  },
-  {
-    "source": "ChatGPT Image Aug 17, 2026, 04_32_16 PM.png",
-    "product_id": "wooden-dhoop-burner-box",
-    "public_asset": "/products/wooden-dhoop-burner-box.png"
-  },
-  {
-    "source": "ChatGPT Image Aug 17, 2026, 04_32_15 PM.png",
-    "product_id": "wooden-temple-diya-stand",
-    "public_asset": "/products/wooden-temple-diya-stand.png"
-  },
-  {
-    "source": "ChatGPT Image Aug 17, 2026, 04_32_13 PM.png",
-    "product_id": "decorative-brass-aarti-spoon",
-    "public_asset": "/products/decorative-brass-aarti-spoon.png"
-  },
-  {
-    "source": "ChatGPT Image Aug 17, 2026, 04_32_09 PM.png",
-    "product_id": "antique-brass-temple-bell",
-    "public_asset": "/products/antique-brass-temple-bell.png"
-  }
+  { "source": "8.png", "product_id": "brass-lotus-multi-diya-urli-stand", "public_asset": "/products/brass-lotus-multi-diya-urli-stand.png" },
+  { "source": "7.png", "product_id": "brass-lotus-deepam-set-of-3", "public_asset": "/products/brass-lotus-deepam-set-of-3.png" },
+  { "source": "6.png", "product_id": "silver-finish-kumkum-haldi-bowls-set-of-2", "public_asset": "/products/silver-finish-kumkum-haldi-bowls-set-of-2.png" },
+  { "source": "5.png", "product_id": "brass-lotus-urli-bowl", "public_asset": "/products/brass-lotus-urli-bowl.png" },
+  { "source": "4.png", "product_id": "wooden-dhoop-burner-box", "public_asset": "/products/wooden-dhoop-burner-box.png" },
+  { "source": "3.png", "product_id": "wooden-temple-diya-stand", "public_asset": "/products/wooden-temple-diya-stand.png" },
+  { "source": "2.png", "product_id": "decorative-brass-aarti-spoon", "public_asset": "/products/decorative-brass-aarti-spoon.png" },
+  { "source": "1.png", "product_id": "antique-brass-temple-bell", "public_asset": "/products/antique-brass-temple-bell.png" },
+  { "source": "20.png", "product_id": "antique-hanging-door-decor-pair", "public_asset": "/products/antique-hanging-door-decor-pair.png" },
+  { "source": "21.png", "product_id": "mahalakshmi-decorative-wall-plate", "public_asset": "/products/mahalakshmi-decorative-wall-plate.png" },
+  { "source": "22.png", "product_id": "wooden-temple-mini-mandir", "public_asset": "/products/wooden-temple-mini-mandir.png" },
+  { "source": "23.png", "product_id": "goddess-lakshmi-idol", "public_asset": "/products/goddess-lakshmi-idol.png" },
+  { "source": "24.png", "product_id": "lord-shiva-meditation-statue", "public_asset": "/products/lord-shiva-meditation-statue.png" },
+  { "source": "9.png", "product_id": "silver-finish-kalash", "public_asset": "/products/silver-finish-kalash.png" },
+  { "source": "10.png", "product_id": "elephant-oil-lamp-stand-set-of-2", "public_asset": "/products/elephant-oil-lamp-stand-set-of-2.png" },
+  { "source": "11.png", "product_id": "luxury-glass-bottle-tumbler-set", "public_asset": "/products/luxury-glass-bottle-tumbler-set.png" },
+  { "source": "12.png", "product_id": "traditional-brass-pooja-thali-set", "public_asset": "/products/traditional-brass-pooja-thali-set.png" },
+  { "source": "13.png", "product_id": "brass-incense-stick-holder-with-cover", "public_asset": "/products/brass-incense-stick-holder-with-cover.png" },
+  { "source": "14.png", "product_id": "handcrafted-wooden-krishna-jhula", "public_asset": "/products/handcrafted-wooden-krishna-jhula.png" },
+  { "source": "15.png", "product_id": "traditional-wooden-decorative-horse", "public_asset": "/products/traditional-wooden-decorative-horse.png" },
+  { "source": "16.png", "product_id": "kamadhenu-cow-with-calf-statue", "public_asset": "/products/kamadhenu-cow-with-calf-statue.png" },
+  { "source": "17.png", "product_id": "brass-lord-murugan-statue", "public_asset": "/products/brass-lord-murugan-statue.png" },
+  { "source": "18.png", "product_id": "black-lord-vishnu-idol", "public_asset": "/products/black-lord-vishnu-idol.png" },
+  { "source": "19.png", "product_id": "brass-lord-ganesha-idol", "public_asset": "/products/brass-lord-ganesha-idol.png" }
 ]

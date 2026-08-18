@@ -1,6 +1,6 @@
-# Divine Collection
+# Saravana Stores
 
-A responsive premium e-commerce storefront and installable mobile web app for spiritual, temple and decorative products in Malaysia.
+A responsive premium e-commerce storefront and installable mobile web app for exactly 24 supplied spiritual, temple and decorative products in India.
 
 ## Front-end
 
@@ -9,7 +9,7 @@ The customer and admin interfaces are framework-free:
 - `index.html` — semantic page shell and metadata
 - `styles.css` — complete responsive design system
 - `app.js` — catalog, navigation, filters, wishlist, cart, API checkout and admin interactions
-- `assets/` — the original supplied product photographs and catalogue reference images
+- `assets/Products/1.png` through `24.png` — the only product photographs used by the catalogue
 - `public/manifest.webmanifest` and `public/sw.js` — installable app and offline storefront shell
 
 No React, Next.js, Tailwind or front-end runtime dependencies are used.
@@ -20,7 +20,7 @@ The backend in `backend/app/main.py` provides:
 
 - server-side product, stock, delivery and promotion validation;
 - SQLite-backed orders for a single-instance deployment;
-- Stripe-hosted Checkout Sessions for cards, FPX and eligible wallets;
+- Stripe-hosted Checkout Sessions with provider-eligible payment methods;
 - raw-body Stripe webhook signature verification;
 - a clearly labelled demo payment mode for previews.
 

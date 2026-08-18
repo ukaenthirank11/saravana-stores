@@ -21,7 +21,7 @@ for (const item of productImageMap) {
 
 const indexPath = resolve(client, "index.html");
 let html = await readFile(indexPath, "utf8");
-if (!html.includes("Divine Collection") || !html.includes("/app.js") || !html.includes("/styles.css") || !html.includes("/manifest.webmanifest")) {
+if (!html.includes("Saravana Stores") || !html.includes("/app.js") || !html.includes("/styles.css") || !html.includes("/manifest.webmanifest")) {
   throw new Error("Static storefront build is incomplete.");
 }
 html = html
@@ -29,5 +29,5 @@ html = html
   .replace('src="/app.js"', 'src="/app.js?v=original-png-v1"');
 await writeFile(indexPath, html);
 
-await writeFile(resolve(dist, "BUILD_COMPLETE"), "Divine Collection standalone HTML/CSS/JS build\n");
-console.log("Divine Collection static build completed.");
+await writeFile(resolve(dist, "BUILD_COMPLETE"), "Saravana Stores standalone HTML/CSS/JS build\n");
+console.log("Saravana Stores static build completed.");

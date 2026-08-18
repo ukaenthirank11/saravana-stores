@@ -1,6 +1,10 @@
 import { spawnSync } from "node:child_process";
+import { existsSync } from "node:fs";
+import { homedir } from "node:os";
+import { resolve } from "node:path";
 
-const python = process.env.PYTHON_EXECUTABLE || "python";
+const bundledPython = resolve(homedir(), ".cache", "codex-runtimes", "codex-primary-runtime", "dependencies", "python", process.platform === "win32" ? "python.exe" : "bin/python");
+const python = process.env.PYTHON_EXECUTABLE || (existsSync(bundledPython) ? bundledPython : "python");
 const result = spawnSync(python, ["backend/tests/test_api.py"], {
   cwd: new URL("../", import.meta.url),
   env: process.env,

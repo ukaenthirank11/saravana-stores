@@ -1,10 +1,11 @@
-const CACHE_NAME = "divine-collection-v9";
+const CACHE_NAME = "saravana-stores-v11";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/styles.css",
   "/app.js",
-  "/manifest.webmanifest"
+  "/manifest.webmanifest",
+  "/public/saravana-stores-logo.png"
 ];
 
 self.addEventListener("install", event => {
@@ -38,7 +39,7 @@ self.addEventListener("fetch", event => {
     return;
   }
 
-  if (url.pathname.startsWith("/products/") || ["/app.js", "/styles.css"].includes(url.pathname)) {
+  if (url.pathname.startsWith("/products/") || url.pathname.startsWith("/public/products/") || ["/app.js", "/styles.css", "/public/saravana-stores-logo.png"].includes(url.pathname)) {
     event.respondWith(
       fetch(request)
         .then(response => {
